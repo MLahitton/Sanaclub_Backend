@@ -59,6 +59,7 @@ public static class DependencyInjection
             });
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ITokenService, JwtTokenService>();
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();
