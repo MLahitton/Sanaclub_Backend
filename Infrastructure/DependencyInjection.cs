@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Application.Common.Security;
 using Sanaclub.Infrastructure.Security;
+using Sanaclub.Infrastructure.Persistence.Repositories;
 using Sanaclub.Infrastructure.Persistence.Seeders;
 using Sanaclub.Infrastructure.Persistence;
 
@@ -60,6 +61,7 @@ public static class DependencyInjection
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();
