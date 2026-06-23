@@ -89,7 +89,7 @@ public static class AuthSeedData
             "users",
             "Permite activar usuarios del sistema."),
         new SeedPermission(
-            new Guid("20000000-0000-0000-000000000009"),
+            new Guid("20000000-0000-0000-0000-000000000009"),
             "roles.read",
             "Consultar roles",
             "roles",
