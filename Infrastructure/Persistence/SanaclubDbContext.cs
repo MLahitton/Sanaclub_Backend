@@ -17,6 +17,7 @@ public sealed class SanaclubDbContext : DbContext, ISanaclubDbContext
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<IdentificationType> IdentificationTypes => Set<IdentificationType>();
     public DbSet<Gender> Genders => Set<Gender>();

@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sanaclub.Application.Common.Abstractions;
+using Sanaclub.Application.Common.Security;
+using Sanaclub.Infrastructure.Security;
 using Sanaclub.Infrastructure.Persistence.Seeders;
 using Sanaclub.Infrastructure.Persistence;
 
@@ -18,7 +20,7 @@ public static class DependencyInjection
         if (string.IsNullOrWhiteSpace(connectionString))
         {
             throw new InvalidOperationException(
-                "La cadena de conexión 'SanaclubDatabase' no está configurada.");
+                "The connection string 'SanaclubDatabase' is not configured.");
         }
 
         services.AddDbContext<SanaclubDbContext>(options =>
@@ -33,6 +35,30 @@ public static class DependencyInjection
 
         services.AddScoped<ISanaclubDbContext>(serviceProvider =>
             serviceProvider.GetRequiredService<SanaclubDbContext>());
+
+        var jwtSection = configuration.GetSection(JwtOptions.SectionName);
+
+        services.AddOptions<JwtOptions>()
+            .Configure(options =>
+            {
+                options.Issuer = jwtSection["Issuer"] ?? string.Empty;
+                options.Audience = jwtSection["Audience"] ?? string.Empty;
+                options.Secret = jwtSection["Secret"] ?? string.Empty;
+
+                if (int.TryParse(jwtSection["AccessTokenExpirationMinutes"], out var accessTokenExpirationMinutes)
+                    && accessTokenExpirationMinutes > 0)
+                {
+                    options.AccessTokenExpirationMinutes = accessTokenExpirationMinutes;
+                }
+
+                if (int.TryParse(jwtSection["RefreshTokenExpirationDays"], out var refreshTokenExpirationDays)
+                    && refreshTokenExpirationDays > 0)
+                {
+                    options.RefreshTokenExpirationDays = refreshTokenExpirationDays;
+                }
+            });
+
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();
