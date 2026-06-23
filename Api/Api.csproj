@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Sanaclub.Api</RootNamespace>
+    <UserSecretsId>1ca99b93-9e33-4484-8d5d-137a6426bf1d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
