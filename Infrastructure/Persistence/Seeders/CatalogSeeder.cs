@@ -115,14 +115,19 @@ public sealed class CatalogSeeder : IDatabaseSeeder
                     updated_at_utc = @now,
                     updated_by_user_id = NULL;";
 
-            await _context.Database.ExecuteSqlRawAsync(
-                sql,
+            var parameters = new object[]
+            {
                 new NpgsqlParameter("id", item.Id),
                 new NpgsqlParameter("code", item.Code),
                 new NpgsqlParameter("name", item.Name),
                 new NpgsqlParameter("description", item.Description ?? (object)DBNull.Value),
                 new NpgsqlParameter("sortOrder", item.SortOrder),
-                new NpgsqlParameter("now", now),
+                new NpgsqlParameter("now", now)
+            };
+
+            await _context.Database.ExecuteSqlRawAsync(
+                sql,
+                parameters,
                 cancellationToken);
         }
     }

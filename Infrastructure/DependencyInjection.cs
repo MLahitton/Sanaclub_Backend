@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sanaclub.Application.Common.Abstractions;
+using Sanaclub.Infrastructure.Persistence.Seeders;
 using Sanaclub.Infrastructure.Persistence;
 
 namespace Sanaclub.Infrastructure;
@@ -32,6 +33,13 @@ public static class DependencyInjection
 
         services.AddScoped<ISanaclubDbContext>(serviceProvider =>
             serviceProvider.GetRequiredService<SanaclubDbContext>());
+
+        services.AddScoped<AuthSeeder>();
+        services.AddScoped<CatalogSeeder>();
+        services.AddScoped<DatabaseSeeder>();
+
+        services.AddScoped<IDatabaseSeeder>(serviceProvider =>
+            serviceProvider.GetRequiredService<DatabaseSeeder>());
 
         return services;
     }
