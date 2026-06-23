@@ -1,7 +1,11 @@
+using Sanaclub.Api.Extensions;
 using Sanaclub.Application;
 using Sanaclub.Infrastructure;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddApiLogging();
 
 builder.Services.AddControllers();
 
@@ -19,8 +23,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseApiRequestLogging();
+
+app.UseApiExceptionHandling();
+
 app.UseHttpsRedirection();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+finally
+{
+    Log.CloseAndFlush();
+}
