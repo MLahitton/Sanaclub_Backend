@@ -65,6 +65,7 @@ public static class DependencyInjection
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();
+        services.AddScoped<DevelopmentAdminSeeder>();
         services.AddScoped<DatabaseSeeder>();
 
         services.AddScoped<IDatabaseSeeder>(serviceProvider =>
