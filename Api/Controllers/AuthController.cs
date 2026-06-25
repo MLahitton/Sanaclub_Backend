@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sanaclub.Api.Contracts.Auth;
 using Sanaclub.Application.Auth.Login;
+using Sanaclub.Application.Auth.ChangePassword;
 using Sanaclub.Application.Auth.Logout;
 using Sanaclub.Application.Auth.Refresh;
 using Sanaclub.Application.Auth.Me;
@@ -76,6 +77,37 @@ public sealed class AuthController : ControllerBase
         {
             RefreshToken = request?.RefreshToken ?? string.Empty,
             IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        };
+
+        await _sender.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ChangePassword(
+        [FromBody] ChangePasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var command = new ChangePasswordCommand
+        {
+            UserId = userId,
+            CurrentPassword = request.CurrentPassword,
+            NewPassword = request.NewPassword,
+            ConfirmNewPassword = request.ConfirmNewPassword
         };
 
         await _sender.Send(command, cancellationToken);

@@ -12,6 +12,10 @@ public interface IAuthRepository
         Guid userId,
         CancellationToken cancellationToken = default);
 
+    Task<User?> GetUserByIdForUpdateAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<string>> GetActiveRoleCodesByUserIdAsync(
         Guid userId,
         CancellationToken cancellationToken = default);

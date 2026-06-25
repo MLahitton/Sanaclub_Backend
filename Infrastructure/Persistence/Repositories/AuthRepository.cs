@@ -32,6 +32,14 @@ public sealed class AuthRepository : IAuthRepository
             .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
     }
 
+    public async Task<User?> GetUserByIdForUpdateAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<string>> GetActiveRoleCodesByUserIdAsync(
         Guid userId,
         CancellationToken cancellationToken = default)
