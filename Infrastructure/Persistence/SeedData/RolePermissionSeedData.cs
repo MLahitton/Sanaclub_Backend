@@ -92,6 +92,18 @@ public static class RolePermissionSeedData
             "ADMIN",
             "patients.archive"),
         new SeedRolePermission(
+            SeedId(104),
+            GetRoleId("ADMIN"),
+            GetPermissionId("patients.create"),
+            "ADMIN",
+            "patients.create"),
+        new SeedRolePermission(
+            SeedId(105),
+            GetRoleId("ADMIN"),
+            GetPermissionId("patients.update"),
+            "ADMIN",
+            "patients.update"),
+        new SeedRolePermission(
             SeedId(15),
             GetRoleId("ADMIN"),
             GetPermissionId("consents.read_templates"),
@@ -587,6 +599,12 @@ public static class RolePermissionSeedData
             "THERAPIST",
             "auth.change_password"),
         new SeedRolePermission(
+            SeedId(106),
+            GetRoleId("THERAPIST"),
+            GetPermissionId("patients.read"),
+            "THERAPIST",
+            "patients.read"),
+        new SeedRolePermission(
             SeedId(97),
             GetRoleId("THERAPIST"),
             GetPermissionId("catalogs.read"),
@@ -628,7 +646,13 @@ public static class RolePermissionSeedData
             GetRoleId("AUDITOR"),
             GetPermissionId("settings.read"),
             "AUDITOR",
-            "settings.read")
+            "settings.read"),
+        new SeedRolePermission(
+            SeedId(107),
+            GetRoleId("AUDITOR"),
+            GetPermissionId("patients.read"),
+            "AUDITOR",
+            "patients.read")
     };
 
     public static IReadOnlyCollection<SeedRolePermission> RolePermissions => _rolePermissions;

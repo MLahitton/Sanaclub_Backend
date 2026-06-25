@@ -143,9 +143,7 @@ public sealed class AuthSeeder : IDatabaseSeeder
                         NULL,
                         NULL,
                         NULL)
-                    ON CONFLICT (id) DO UPDATE SET
-                        role_id = EXCLUDED.role_id,
-                        permission_id = EXCLUDED.permission_id,
+                    ON CONFLICT (role_id, permission_id) DO UPDATE SET
                         is_active = true,
                         revoked_at_utc = NULL,
                         revoked_by_user_id = NULL,
@@ -156,4 +154,3 @@ public sealed class AuthSeeder : IDatabaseSeeder
         }
     }
 }
-
