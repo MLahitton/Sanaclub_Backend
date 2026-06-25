@@ -8,6 +8,10 @@ public interface IAuthRepository
         string normalizedEmail,
         CancellationToken cancellationToken = default);
 
+    Task<User?> GetUserByIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<string>> GetActiveRoleCodesByUserIdAsync(
         Guid userId,
         CancellationToken cancellationToken = default);

@@ -23,6 +23,15 @@ public sealed class AuthRepository : IAuthRepository
             .SingleOrDefaultAsync(x => x.NormalizedEmail == normalizedEmail, cancellationToken);
     }
 
+    public async Task<User?> GetUserByIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<string>> GetActiveRoleCodesByUserIdAsync(
         Guid userId,
         CancellationToken cancellationToken = default)
