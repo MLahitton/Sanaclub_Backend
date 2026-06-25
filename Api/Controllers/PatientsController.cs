@@ -9,6 +9,7 @@ using Sanaclub.Application.Patients.Common;
 using Sanaclub.Application.Patients.Create;
 using Sanaclub.Application.Patients.GetById;
 using Sanaclub.Application.Patients.List;
+using Sanaclub.Application.Patients.Update;
 
 namespace Sanaclub.Api.Controllers;
 
@@ -81,6 +82,49 @@ public sealed class PatientsController : ControllerBase
         };
 
         var response = await _sender.Send(query, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPut("{id:guid}")]
+    [RequirePermission("patients.update")]
+    [ProducesResponseType(typeof(PatientResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<PatientResponse>> Update(
+        [FromRoute] Guid id,
+        [FromBody] UpdatePatientRequest request,
+        CancellationToken cancellationToken)
+    {
+        var updatedByUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!Guid.TryParse(updatedByUserIdClaim, out var updatedByUserId))
+        {
+            return Unauthorized();
+        }
+
+        var command = new UpdatePatientCommand
+        {
+            PatientId = id,
+            IdentificationTypeId = request.IdentificationTypeId,
+            IdentificationNumber = request.IdentificationNumber,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            BirthDate = request.BirthDate,
+            GenderId = request.GenderId,
+            CivilStatusId = request.CivilStatusId,
+            PhoneNumber = request.PhoneNumber,
+            Email = request.Email,
+            Address = request.Address,
+            PatientStatusId = request.PatientStatusId,
+            UpdatedByUserId = updatedByUserId
+        };
+
+        var response = await _sender.Send(command, cancellationToken);
 
         return Ok(response);
     }

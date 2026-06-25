@@ -40,6 +40,14 @@ public sealed class PatientRepository : IPatientRepository
             .SingleOrDefaultAsync(x => x.Id == patientId, cancellationToken);
     }
 
+    public async Task<Patient?> GetByIdForUpdateAsync(
+        Guid patientId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Patients
+            .SingleOrDefaultAsync(x => x.Id == patientId, cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<Patient>> ListAsync(
         string? search,
         bool? isActive,
@@ -67,6 +75,23 @@ public sealed class PatientRepository : IPatientRepository
     {
         var query = BuildSearchQuery(_context.Patients.AsNoTracking(), search, isActive, patientStatusId);
         return await query.CountAsync(cancellationToken);
+    }
+
+    public async Task<bool> ExistsByIdentificationExcludingPatientAsync(
+        Guid patientId,
+        Guid identificationTypeId,
+        string identificationNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var trimmedIdentificationNumber = identificationNumber.Trim();
+
+        return await _context.Patients
+            .AsNoTracking()
+            .AnyAsync(
+                x => x.Id != patientId
+                    && x.IdentificationTypeId == identificationTypeId
+                    && x.IdentificationNumber == trimmedIdentificationNumber,
+                cancellationToken);
     }
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

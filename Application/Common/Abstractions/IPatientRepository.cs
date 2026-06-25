@@ -17,6 +17,10 @@ public interface IPatientRepository
         Guid patientId,
         CancellationToken cancellationToken = default);
 
+    Task<Patient?> GetByIdForUpdateAsync(
+        Guid patientId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<Patient>> ListAsync(
         string? search,
         bool? isActive,
@@ -29,6 +33,12 @@ public interface IPatientRepository
         string? search,
         bool? isActive,
         Guid? patientStatusId,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsByIdentificationExcludingPatientAsync(
+        Guid patientId,
+        Guid identificationTypeId,
+        string identificationNumber,
         CancellationToken cancellationToken = default);
 
     Task<int> SaveChangesAsync(
