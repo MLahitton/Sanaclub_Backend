@@ -64,6 +64,14 @@ public sealed class AuthRepository : IAuthRepository
         return await permissions.Distinct().ToListAsync(cancellationToken);
     }
 
+    public async Task<RefreshToken?> GetRefreshTokenByHashAsync(
+        string refreshTokenHash,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.RefreshTokens
+            .SingleOrDefaultAsync(x => x.TokenHash == refreshTokenHash, cancellationToken);
+    }
+
     public async Task AddRefreshTokenAsync(
         RefreshToken refreshToken,
         CancellationToken cancellationToken = default)

@@ -20,6 +20,10 @@ public interface IAuthRepository
         Guid userId,
         CancellationToken cancellationToken = default);
 
+    Task<RefreshToken?> GetRefreshTokenByHashAsync(
+        string refreshTokenHash,
+        CancellationToken cancellationToken = default);
+
     Task AddRefreshTokenAsync(
         RefreshToken refreshToken,
         CancellationToken cancellationToken = default);

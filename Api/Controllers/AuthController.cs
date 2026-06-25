@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sanaclub.Api.Contracts.Auth;
 using Sanaclub.Application.Auth.Login;
+using Sanaclub.Application.Auth.Refresh;
 using Sanaclub.Application.Auth.Me;
 
 namespace Sanaclub.Api.Controllers;
@@ -33,6 +34,27 @@ public sealed class AuthController : ControllerBase
         {
             Email = request.Email,
             Password = request.Password,
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        };
+
+        var response = await _sender.Send(command, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(RefreshTokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<RefreshTokenResponse>> Refresh(
+        [FromBody] RefreshTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new RefreshTokenCommand
+        {
+            RefreshToken = request.RefreshToken,
             IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
         };
 
