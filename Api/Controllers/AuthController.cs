@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sanaclub.Api.Contracts.Auth;
 using Sanaclub.Application.Auth.Login;
+using Sanaclub.Application.Auth.Logout;
 using Sanaclub.Application.Auth.Refresh;
 using Sanaclub.Application.Auth.Me;
 
@@ -61,6 +62,25 @@ public sealed class AuthController : ControllerBase
         var response = await _sender.Send(command, cancellationToken);
 
         return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Logout(
+        [FromBody] LogoutRequest? request,
+        CancellationToken cancellationToken)
+    {
+        var command = new LogoutCommand
+        {
+            RefreshToken = request?.RefreshToken ?? string.Empty,
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+        };
+
+        await _sender.Send(command, cancellationToken);
+
+        return NoContent();
     }
 
     [Authorize]
