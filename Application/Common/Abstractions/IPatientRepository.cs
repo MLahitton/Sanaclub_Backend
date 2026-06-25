@@ -19,12 +19,16 @@ public interface IPatientRepository
 
     Task<IReadOnlyCollection<Patient>> ListAsync(
         string? search,
+        bool? isActive,
+        Guid? patientStatusId,
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default);
 
     Task<int> CountAsync(
         string? search,
+        bool? isActive,
+        Guid? patientStatusId,
         CancellationToken cancellationToken = default);
 
     Task<int> SaveChangesAsync(

@@ -98,6 +98,8 @@ public sealed class PatientsController : ControllerBase
         var query = new ListPatientsQuery
         {
             Search = queryParameters.Search,
+            IsActive = queryParameters.IsActive,
+            PatientStatusId = queryParameters.PatientStatusId,
             PageNumber = queryParameters.PageNumber,
             PageSize = queryParameters.PageSize
         };

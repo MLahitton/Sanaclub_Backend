@@ -9,6 +9,8 @@ namespace Sanaclub.Application.Patients.List;
 public sealed class ListPatientsQuery : IRequest<PaginatedResult<PatientResponse>>
 {
     public string? Search { get; init; }
+    public bool? IsActive { get; init; }
+    public Guid? PatientStatusId { get; init; }
     public int PageNumber { get; init; } = 1;
     public int PageSize { get; init; } = 20;
 }
@@ -46,9 +48,15 @@ public sealed class ListPatientsQueryHandler : IRequestHandler<ListPatientsQuery
             ? null
             : request.Search.Trim();
 
-        var totalCount = await _patientRepository.CountAsync(normalizedSearch, cancellationToken);
+        var totalCount = await _patientRepository.CountAsync(
+            normalizedSearch,
+            request.IsActive,
+            request.PatientStatusId,
+            cancellationToken);
         var patients = await _patientRepository.ListAsync(
             normalizedSearch,
+            request.IsActive,
+            request.PatientStatusId,
             pageNumber,
             pageSize,
             cancellationToken);

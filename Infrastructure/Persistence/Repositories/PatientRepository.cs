@@ -42,23 +42,30 @@ public sealed class PatientRepository : IPatientRepository
 
     public async Task<IReadOnlyCollection<Patient>> ListAsync(
         string? search,
+        bool? isActive,
+        Guid? patientStatusId,
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        var query = BuildSearchQuery(_context.Patients.AsNoTracking(), search);
+        var query = BuildSearchQuery(_context.Patients.AsNoTracking(), search, isActive, patientStatusId);
 
         return await query
             .OrderBy(x => x.LastName)
             .ThenBy(x => x.FirstName)
+            .ThenBy(x => x.IdentificationNumber)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> CountAsync(string? search, CancellationToken cancellationToken = default)
+    public async Task<int> CountAsync(
+        string? search,
+        bool? isActive,
+        Guid? patientStatusId,
+        CancellationToken cancellationToken = default)
     {
-        var query = BuildSearchQuery(_context.Patients.AsNoTracking(), search);
+        var query = BuildSearchQuery(_context.Patients.AsNoTracking(), search, isActive, patientStatusId);
         return await query.CountAsync(cancellationToken);
     }
 
@@ -69,18 +76,43 @@ public sealed class PatientRepository : IPatientRepository
 
     private static IQueryable<Patient> BuildSearchQuery(
         IQueryable<Patient> query,
-        string? search)
+        string? search,
+        bool? isActive,
+        Guid? patientStatusId)
     {
+        if (isActive.HasValue)
+        {
+            query = query.Where(x => x.IsActive == isActive.Value);
+        }
+
+        if (patientStatusId.HasValue && patientStatusId.Value != Guid.Empty)
+        {
+            query = query.Where(x => x.PatientStatusId == patientStatusId.Value);
+        }
+
         if (string.IsNullOrWhiteSpace(search))
         {
             return query;
         }
 
         var searchTrimmed = search.Trim();
+        var terms = searchTrimmed
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        return query.Where(x =>
-            x.IdentificationNumber.Contains(searchTrimmed) ||
-            x.FirstName.Contains(searchTrimmed) ||
-            x.LastName.Contains(searchTrimmed));
+        foreach (var term in terms)
+        {
+            var pattern = $"%{term}%";
+
+            query = query.Where(x =>
+                EF.Functions.ILike(x.IdentificationNumber, pattern) ||
+                EF.Functions.ILike(x.FirstName, pattern) ||
+                EF.Functions.ILike(x.LastName, pattern) ||
+                EF.Functions.ILike(x.FirstName + " " + x.LastName, pattern) ||
+                EF.Functions.ILike(x.LastName + " " + x.FirstName, pattern) ||
+                (x.PhoneNumber != null && EF.Functions.ILike(x.PhoneNumber, pattern)) ||
+                (x.Email != null && EF.Functions.ILike(x.Email, pattern)));
+        }
+
+        return query;
     }
 }
