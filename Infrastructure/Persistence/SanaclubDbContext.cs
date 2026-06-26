@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Domain.Auth;
 using Sanaclub.Domain.Catalogs;
+using Sanaclub.Domain.Consents;
 using Sanaclub.Domain.Patients;
 
 namespace Sanaclub.Infrastructure.Persistence;
@@ -29,6 +30,7 @@ public sealed class SanaclubDbContext : DbContext, ISanaclubDbContext
     public DbSet<TreatmentStatus> TreatmentStatuses => Set<TreatmentStatus>();
     public DbSet<EvolutionStatus> EvolutionStatuses => Set<EvolutionStatus>();
     public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<InformedConsent> InformedConsents => Set<InformedConsent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
