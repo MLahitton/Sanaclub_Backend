@@ -63,6 +63,7 @@ public static class DependencyInjection
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IPatientRepository, PatientRepository>();
+        services.AddScoped<ICatalogRepository, CatalogRepository>();
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();

@@ -1,0 +1,18 @@
+﻿using Sanaclub.Application.Catalogs.Common;
+
+namespace Sanaclub.Application.Common.Abstractions;
+
+public interface ICatalogRepository
+{
+    Task<IReadOnlyCollection<CatalogItemResponse>> ListIdentificationTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<CatalogItemResponse>> ListGendersAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<CatalogItemResponse>> ListCivilStatusesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<CatalogItemResponse>> ListPatientStatusesAsync(
+        CancellationToken cancellationToken = default);
+}

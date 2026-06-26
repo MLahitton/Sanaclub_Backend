@@ -204,4 +204,15 @@ public sealed class Patient : AuditableEntity
         PatientStatusId = patientStatusId;
         MarkAsUpdated(updatedByUserId);
     }
+
+    public void Archive(Guid? archivedByUserId = null)
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        IsActive = false;
+        MarkAsUpdated(archivedByUserId);
+    }
 }

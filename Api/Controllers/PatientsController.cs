@@ -7,6 +7,7 @@ using Sanaclub.Api.Contracts.Patients;
 using Sanaclub.Application.Common.Models;
 using Sanaclub.Application.Patients.Common;
 using Sanaclub.Application.Patients.Create;
+using Sanaclub.Application.Patients.Archive;
 using Sanaclub.Application.Patients.GetById;
 using Sanaclub.Application.Patients.List;
 using Sanaclub.Application.Patients.Update;
@@ -122,6 +123,36 @@ public sealed class PatientsController : ControllerBase
             Address = request.Address,
             PatientStatusId = request.PatientStatusId,
             UpdatedByUserId = updatedByUserId
+        };
+
+        var response = await _sender.Send(command, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPost("{id:guid}/archive")]
+    [RequirePermission("patients.archive")]
+    [ProducesResponseType(typeof(PatientResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<PatientResponse>> Archive(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        var archivedByUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!Guid.TryParse(archivedByUserIdClaim, out var archivedByUserId))
+        {
+            return Unauthorized();
+        }
+
+        var command = new ArchivePatientCommand
+        {
+            PatientId = id,
+            ArchivedByUserId = archivedByUserId
         };
 
         var response = await _sender.Send(command, cancellationToken);
