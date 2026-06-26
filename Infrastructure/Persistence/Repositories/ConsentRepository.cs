@@ -27,6 +27,14 @@ public sealed class ConsentRepository : IConsentRepository
             .SingleOrDefaultAsync(x => x.Id == consentId, cancellationToken);
     }
 
+    public async Task<InformedConsent?> GetByIdForUpdateAsync(
+        Guid consentId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.InformedConsents
+            .SingleOrDefaultAsync(x => x.Id == consentId, cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<InformedConsent>> ListByPatientIdAsync(
         Guid patientId,
         CancellationToken cancellationToken = default)
@@ -43,4 +51,3 @@ public sealed class ConsentRepository : IConsentRepository
         return _context.SaveChangesAsync(cancellationToken);
     }
 }
-

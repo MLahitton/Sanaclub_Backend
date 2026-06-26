@@ -63,6 +63,31 @@ public sealed class PatientConfiguration : IEntityTypeConfiguration<Patient>
             .HasMaxLength(250)
             .IsRequired(false);
 
+        builder.Property(x => x.CityOrMunicipality)
+            .HasColumnName("city_or_municipality")
+            .HasMaxLength(150)
+            .IsRequired(false);
+
+        builder.Property(x => x.Occupation)
+            .HasColumnName("occupation")
+            .HasMaxLength(150)
+            .IsRequired(false);
+
+        builder.Property(x => x.EmergencyContactName)
+            .HasColumnName("emergency_contact_name")
+            .HasMaxLength(200)
+            .IsRequired(false);
+
+        builder.Property(x => x.EmergencyContactRelationship)
+            .HasColumnName("emergency_contact_relationship")
+            .HasMaxLength(100)
+            .IsRequired(false);
+
+        builder.Property(x => x.EmergencyContactPhone)
+            .HasColumnName("emergency_contact_phone")
+            .HasMaxLength(50)
+            .IsRequired(false);
+
         builder.Property(x => x.PatientStatusId)
             .HasColumnName("patient_status_id")
             .IsRequired();

@@ -94,14 +94,25 @@ public sealed class InformedConsent : AuditableEntity
     }
 
     public void MarkAsSigned(
-        Guid? signedByUserId,
+        Guid signedByUserId,
         string patientSignerName,
+        Guid signedConsentStatusId,
         DateTime? signedAtUtc = null)
     {
+        if (signedByUserId == Guid.Empty)
+        {
+            throw new DomainException("El identificador del usuario firmante es obligatorio.");
+        }
+
+        if (signedConsentStatusId == Guid.Empty)
+        {
+            throw new DomainException("El estado de consentimiento firmado es obligatorio.");
+        }
+
         var trimmedPatientSignerName = string.IsNullOrWhiteSpace(patientSignerName)
-            ? null
+            ? string.Empty
             : patientSignerName.Trim();
-        if (trimmedPatientSignerName is null)
+        if (string.IsNullOrWhiteSpace(trimmedPatientSignerName))
         {
             throw new DomainException("El nombre del firmante del paciente es obligatorio.");
         }
@@ -111,6 +122,12 @@ public sealed class InformedConsent : AuditableEntity
             throw new DomainException("El nombre del firmante del paciente no puede superar los 200 caracteres.");
         }
 
+        if (!IsActive)
+        {
+            throw new DomainException("El consentimiento se encuentra inactivo.");
+        }
+
+        ConsentStatusId = signedConsentStatusId;
         SignedByUserId = signedByUserId;
         SignedAtUtc = signedAtUtc ?? DateTime.UtcNow;
         PatientSignerName = trimmedPatientSignerName;
@@ -129,4 +146,3 @@ public sealed class InformedConsent : AuditableEntity
         MarkAsUpdated(revokedByUserId);
     }
 }
-

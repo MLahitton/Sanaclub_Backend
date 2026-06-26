@@ -9,6 +9,7 @@ using Sanaclub.Application.Consents.Common;
 using Sanaclub.Application.Consents.Create;
 using Sanaclub.Application.Consents.GetById;
 using Sanaclub.Application.Consents.ListByPatient;
+using Sanaclub.Application.Consents.Sign;
 
 namespace Sanaclub.Api.Controllers;
 
@@ -102,6 +103,39 @@ public sealed class ConsentsController : ControllerBase
         };
 
         var response = await _sender.Send(query, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPost("consents/{id:guid}/sign")]
+    [RequirePermission("consents.sign")]
+    [ProducesResponseType(typeof(ConsentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<ConsentResponse>> Sign(
+        [FromRoute] Guid id,
+        [FromBody] SignConsentRequest request,
+        CancellationToken cancellationToken)
+    {
+        var signedByUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!Guid.TryParse(signedByUserIdClaim, out var signedByUserId))
+        {
+            return Unauthorized();
+        }
+
+        var command = new SignConsentCommand
+        {
+            ConsentId = id,
+            PatientSignerName = request.PatientSignerName,
+            SignedByUserId = signedByUserId
+        };
+
+        var response = await _sender.Send(command, cancellationToken);
 
         return Ok(response);
     }

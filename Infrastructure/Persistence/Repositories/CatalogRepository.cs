@@ -89,4 +89,19 @@ public sealed class CatalogRepository : ICatalogRepository
 
         return items;
     }
+
+    public async Task<Guid?> GetConsentStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedCode = string.IsNullOrWhiteSpace(code)
+            ? string.Empty
+            : code.Trim();
+
+        return await _context.ConsentStatuses
+            .AsNoTracking()
+            .Where(x => x.IsActive && x.Code == normalizedCode)
+            .Select(x => (Guid?)x.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

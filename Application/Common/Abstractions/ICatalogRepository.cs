@@ -15,4 +15,8 @@ public interface ICatalogRepository
 
     Task<IReadOnlyCollection<CatalogItemResponse>> ListPatientStatusesAsync(
         CancellationToken cancellationToken = default);
+
+    Task<Guid?> GetConsentStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default);
 }

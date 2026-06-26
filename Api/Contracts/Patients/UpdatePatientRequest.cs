@@ -14,5 +14,10 @@ public sealed class UpdatePatientRequest
     public string? PhoneNumber { get; init; }
     public string? Email { get; init; }
     public string? Address { get; init; }
+    public string? CityOrMunicipality { get; init; }
+    public string? Occupation { get; init; }
+    public string? EmergencyContactName { get; init; }
+    public string? EmergencyContactRelationship { get; init; }
+    public string? EmergencyContactPhone { get; init; }
     public Guid PatientStatusId { get; init; }
 }

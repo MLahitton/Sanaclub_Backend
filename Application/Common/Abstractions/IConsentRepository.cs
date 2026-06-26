@@ -12,6 +12,10 @@ public interface IConsentRepository
         Guid consentId,
         CancellationToken cancellationToken = default);
 
+    Task<InformedConsent?> GetByIdForUpdateAsync(
+        Guid consentId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<InformedConsent>> ListByPatientIdAsync(
         Guid patientId,
         CancellationToken cancellationToken = default);
@@ -19,4 +23,3 @@ public interface IConsentRepository
     Task<int> SaveChangesAsync(
         CancellationToken cancellationToken = default);
 }
-

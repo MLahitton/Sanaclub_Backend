@@ -57,6 +57,11 @@ public sealed class PatientsController : ControllerBase
             PhoneNumber = request.PhoneNumber,
             Email = request.Email,
             Address = request.Address,
+            CityOrMunicipality = request.CityOrMunicipality,
+            Occupation = request.Occupation,
+            EmergencyContactName = request.EmergencyContactName,
+            EmergencyContactRelationship = request.EmergencyContactRelationship,
+            EmergencyContactPhone = request.EmergencyContactPhone,
             PatientStatusId = request.PatientStatusId,
             CreatedByUserId = createdByUserId
         };
@@ -121,6 +126,11 @@ public sealed class PatientsController : ControllerBase
             PhoneNumber = request.PhoneNumber,
             Email = request.Email,
             Address = request.Address,
+            CityOrMunicipality = request.CityOrMunicipality,
+            Occupation = request.Occupation,
+            EmergencyContactName = request.EmergencyContactName,
+            EmergencyContactRelationship = request.EmergencyContactRelationship,
+            EmergencyContactPhone = request.EmergencyContactPhone,
             PatientStatusId = request.PatientStatusId,
             UpdatedByUserId = updatedByUserId
         };

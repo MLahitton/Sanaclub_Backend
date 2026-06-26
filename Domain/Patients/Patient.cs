@@ -14,6 +14,11 @@ public sealed class Patient : AuditableEntity
     public string? PhoneNumber { get; private set; }
     public string? Email { get; private set; }
     public string? Address { get; private set; }
+    public string? CityOrMunicipality { get; private set; }
+    public string? Occupation { get; private set; }
+    public string? EmergencyContactName { get; private set; }
+    public string? EmergencyContactRelationship { get; private set; }
+    public string? EmergencyContactPhone { get; private set; }
     public Guid PatientStatusId { get; private set; }
     public bool IsActive { get; private set; }
 
@@ -25,6 +30,11 @@ public sealed class Patient : AuditableEntity
     private const int MaxPhoneNumberLength = 50;
     private const int MaxEmailLength = 150;
     private const int MaxAddressLength = 250;
+    private const int MaxCityOrMunicipalityLength = 150;
+    private const int MaxOccupationLength = 150;
+    private const int MaxEmergencyContactNameLength = 200;
+    private const int MaxEmergencyContactRelationshipLength = 100;
+    private const int MaxEmergencyContactPhoneLength = 50;
 
     private Patient()
     {
@@ -41,6 +51,11 @@ public sealed class Patient : AuditableEntity
         string? phoneNumber,
         string? email,
         string? address,
+        string? cityOrMunicipality,
+        string? occupation,
+        string? emergencyContactName,
+        string? emergencyContactRelationship,
+        string? emergencyContactPhone,
         Guid patientStatusId)
     {
         if (identificationTypeId == Guid.Empty)
@@ -98,6 +113,46 @@ public sealed class Patient : AuditableEntity
             throw new DomainException("La dirección no puede superar 250 caracteres.");
         }
 
+        var trimmedCityOrMunicipality = string.IsNullOrWhiteSpace(cityOrMunicipality)
+            ? null
+            : cityOrMunicipality.Trim();
+        if (trimmedCityOrMunicipality is not null && trimmedCityOrMunicipality.Length > MaxCityOrMunicipalityLength)
+        {
+            throw new DomainException("La ciudad o municipio no puede superar los 150 caracteres.");
+        }
+
+        var trimmedOccupation = string.IsNullOrWhiteSpace(occupation)
+            ? null
+            : occupation.Trim();
+        if (trimmedOccupation is not null && trimmedOccupation.Length > MaxOccupationLength)
+        {
+            throw new DomainException("La ocupación no puede superar los 150 caracteres.");
+        }
+
+        var trimmedEmergencyContactName = string.IsNullOrWhiteSpace(emergencyContactName)
+            ? null
+            : emergencyContactName.Trim();
+        if (trimmedEmergencyContactName is not null && trimmedEmergencyContactName.Length > MaxEmergencyContactNameLength)
+        {
+            throw new DomainException("El nombre de contacto de emergencia no puede superar los 200 caracteres.");
+        }
+
+        var trimmedEmergencyContactRelationship = string.IsNullOrWhiteSpace(emergencyContactRelationship)
+            ? null
+            : emergencyContactRelationship.Trim();
+        if (trimmedEmergencyContactRelationship is not null && trimmedEmergencyContactRelationship.Length > MaxEmergencyContactRelationshipLength)
+        {
+            throw new DomainException("La relación de contacto de emergencia no puede superar los 100 caracteres.");
+        }
+
+        var trimmedEmergencyContactPhone = string.IsNullOrWhiteSpace(emergencyContactPhone)
+            ? null
+            : emergencyContactPhone.Trim();
+        if (trimmedEmergencyContactPhone is not null && trimmedEmergencyContactPhone.Length > MaxEmergencyContactPhoneLength)
+        {
+            throw new DomainException("El teléfono de contacto de emergencia no puede superar los 50 caracteres.");
+        }
+
         if (patientStatusId == Guid.Empty)
         {
             throw new DomainException("El estado del paciente es obligatorio.");
@@ -113,6 +168,11 @@ public sealed class Patient : AuditableEntity
         PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim();
         Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
         Address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
+        CityOrMunicipality = trimmedCityOrMunicipality;
+        Occupation = trimmedOccupation;
+        EmergencyContactName = trimmedEmergencyContactName;
+        EmergencyContactRelationship = trimmedEmergencyContactRelationship;
+        EmergencyContactPhone = trimmedEmergencyContactPhone;
         PatientStatusId = patientStatusId;
         IsActive = true;
     }
@@ -128,6 +188,11 @@ public sealed class Patient : AuditableEntity
         string? phoneNumber,
         string? email,
         string? address,
+        string? cityOrMunicipality,
+        string? occupation,
+        string? emergencyContactName,
+        string? emergencyContactRelationship,
+        string? emergencyContactPhone,
         Guid patientStatusId,
         Guid? updatedByUserId = null)
     {
@@ -186,6 +251,46 @@ public sealed class Patient : AuditableEntity
             throw new DomainException("La dirección no puede superar 250 caracteres.");
         }
 
+        var trimmedCityOrMunicipality = string.IsNullOrWhiteSpace(cityOrMunicipality)
+            ? null
+            : cityOrMunicipality.Trim();
+        if (trimmedCityOrMunicipality is not null && trimmedCityOrMunicipality.Length > MaxCityOrMunicipalityLength)
+        {
+            throw new DomainException("La ciudad o municipio no puede superar los 150 caracteres.");
+        }
+
+        var trimmedOccupation = string.IsNullOrWhiteSpace(occupation)
+            ? null
+            : occupation.Trim();
+        if (trimmedOccupation is not null && trimmedOccupation.Length > MaxOccupationLength)
+        {
+            throw new DomainException("La ocupación no puede superar los 150 caracteres.");
+        }
+
+        var trimmedEmergencyContactName = string.IsNullOrWhiteSpace(emergencyContactName)
+            ? null
+            : emergencyContactName.Trim();
+        if (trimmedEmergencyContactName is not null && trimmedEmergencyContactName.Length > MaxEmergencyContactNameLength)
+        {
+            throw new DomainException("El nombre de contacto de emergencia no puede superar los 200 caracteres.");
+        }
+
+        var trimmedEmergencyContactRelationship = string.IsNullOrWhiteSpace(emergencyContactRelationship)
+            ? null
+            : emergencyContactRelationship.Trim();
+        if (trimmedEmergencyContactRelationship is not null && trimmedEmergencyContactRelationship.Length > MaxEmergencyContactRelationshipLength)
+        {
+            throw new DomainException("La relación de contacto de emergencia no puede superar los 100 caracteres.");
+        }
+
+        var trimmedEmergencyContactPhone = string.IsNullOrWhiteSpace(emergencyContactPhone)
+            ? null
+            : emergencyContactPhone.Trim();
+        if (trimmedEmergencyContactPhone is not null && trimmedEmergencyContactPhone.Length > MaxEmergencyContactPhoneLength)
+        {
+            throw new DomainException("El teléfono de contacto de emergencia no puede superar los 50 caracteres.");
+        }
+
         if (patientStatusId == Guid.Empty)
         {
             throw new DomainException("El estado del paciente es obligatorio.");
@@ -201,6 +306,11 @@ public sealed class Patient : AuditableEntity
         PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim();
         Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
         Address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
+        CityOrMunicipality = trimmedCityOrMunicipality;
+        Occupation = trimmedOccupation;
+        EmergencyContactName = trimmedEmergencyContactName;
+        EmergencyContactRelationship = trimmedEmergencyContactRelationship;
+        EmergencyContactPhone = trimmedEmergencyContactPhone;
         PatientStatusId = patientStatusId;
         MarkAsUpdated(updatedByUserId);
     }
