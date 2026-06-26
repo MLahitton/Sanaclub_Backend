@@ -116,6 +116,30 @@ public static class RolePermissionSeedData
             "ADMIN",
             "consents.manage_templates"),
         new SeedRolePermission(
+            SeedId(108),
+            GetRoleId("ADMIN"),
+            GetPermissionId("consents.create"),
+            "ADMIN",
+            "consents.create"),
+        new SeedRolePermission(
+            SeedId(109),
+            GetRoleId("ADMIN"),
+            GetPermissionId("consents.read"),
+            "ADMIN",
+            "consents.read"),
+        new SeedRolePermission(
+            SeedId(110),
+            GetRoleId("ADMIN"),
+            GetPermissionId("consents.sign"),
+            "ADMIN",
+            "consents.sign"),
+        new SeedRolePermission(
+            SeedId(111),
+            GetRoleId("ADMIN"),
+            GetPermissionId("consents.revoke"),
+            "ADMIN",
+            "consents.revoke"),
+        new SeedRolePermission(
             SeedId(17),
             GetRoleId("ADMIN"),
             GetPermissionId("documents.read"),
