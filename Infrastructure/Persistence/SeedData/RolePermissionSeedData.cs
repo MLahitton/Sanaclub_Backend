@@ -193,6 +193,24 @@ public static class RolePermissionSeedData
             GetPermissionId("settings.manage"),
             "ADMIN",
             "settings.manage"),
+        new SeedRolePermission(
+            SeedId(119),
+            GetRoleId("ADMIN"),
+            GetPermissionId("treatments.create"),
+            "ADMIN",
+            "treatments.create"),
+        new SeedRolePermission(
+            SeedId(120),
+            GetRoleId("ADMIN"),
+            GetPermissionId("treatments.read"),
+            "ADMIN",
+            "treatments.read"),
+        new SeedRolePermission(
+            SeedId(121),
+            GetRoleId("ADMIN"),
+            GetPermissionId("treatments.update_medical_indication"),
+            "ADMIN",
+            "treatments.update_medical_indication"),
 
         new SeedRolePermission(
             SeedId(26),
@@ -284,6 +302,12 @@ public static class RolePermissionSeedData
             GetPermissionId("treatments.read"),
             "DOCTOR",
             "treatments.read"),
+        new SeedRolePermission(
+            SeedId(122),
+            GetRoleId("DOCTOR"),
+            GetPermissionId("treatments.update_medical_indication"),
+            "DOCTOR",
+            "treatments.update_medical_indication"),
         new SeedRolePermission(
             SeedId(41),
             GetRoleId("DOCTOR"),

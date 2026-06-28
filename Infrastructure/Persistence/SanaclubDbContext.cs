@@ -4,6 +4,7 @@ using Sanaclub.Domain.Auth;
 using Sanaclub.Domain.Catalogs;
 using Sanaclub.Domain.Consents;
 using Sanaclub.Domain.Patients;
+using Sanaclub.Domain.TreatmentSheets;
 
 namespace Sanaclub.Infrastructure.Persistence;
 
@@ -31,6 +32,7 @@ public sealed class SanaclubDbContext : DbContext, ISanaclubDbContext
     public DbSet<EvolutionStatus> EvolutionStatuses => Set<EvolutionStatus>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<InformedConsent> InformedConsents => Set<InformedConsent>();
+    public DbSet<TreatmentSheet> TreatmentSheets => Set<TreatmentSheet>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

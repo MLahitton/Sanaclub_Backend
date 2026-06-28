@@ -19,4 +19,8 @@ public interface ICatalogRepository
     Task<Guid?> GetConsentStatusIdByCodeAsync(
         string code,
         CancellationToken cancellationToken = default);
+
+    Task<Guid?> GetTreatmentStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default);
 }

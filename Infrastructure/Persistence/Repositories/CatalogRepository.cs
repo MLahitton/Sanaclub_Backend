@@ -104,4 +104,19 @@ public sealed class CatalogRepository : ICatalogRepository
             .Select(x => (Guid?)x.Id)
             .SingleOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<Guid?> GetTreatmentStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedCode = string.IsNullOrWhiteSpace(code)
+            ? string.Empty
+            : code.Trim();
+
+        return await _context.TreatmentStatuses
+            .AsNoTracking()
+            .Where(x => x.IsActive && x.Code == normalizedCode)
+            .Select(x => (Guid?)x.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

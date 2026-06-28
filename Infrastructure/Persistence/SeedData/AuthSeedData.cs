@@ -245,6 +245,12 @@ public static class AuthSeedData
             "treatments",
             "Permite anular tratamiento con motivo obligatorio."),
         new SeedPermission(
+            new Guid("20000000-0000-0000-0000-000000000060"),
+            "treatments.update_medical_indication",
+            "Actualizar indicación médica",
+            "treatments",
+            "Permite actualizar la indicación médica de una hoja de tratamiento."),
+        new SeedPermission(
             new Guid("20000000-0000-0000-0000-000000000035"),
             "evolutions.create",
             "Crear evoluciones",
