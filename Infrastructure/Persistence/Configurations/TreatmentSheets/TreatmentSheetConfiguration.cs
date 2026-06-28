@@ -133,6 +133,16 @@ public sealed class TreatmentSheetConfiguration : IEntityTypeConfiguration<Treat
             .HasMaxLength(2000)
             .IsRequired(false);
 
+        builder.Property(x => x.ApprovedAtUtc)
+            .HasColumnName("approved_at_utc")
+            .HasColumnType("timestamp with time zone")
+            .IsRequired(false);
+
+        builder.Property(x => x.ApprovedByUserId)
+            .HasColumnName("approved_by_user_id")
+            .HasColumnType("uuid")
+            .IsRequired(false);
+
         builder.Property(x => x.IsActive)
             .HasColumnName("is_active")
             .IsRequired()
@@ -171,4 +181,3 @@ public sealed class TreatmentSheetConfiguration : IEntityTypeConfiguration<Treat
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
-

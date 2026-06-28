@@ -27,8 +27,9 @@ public sealed class TreatmentSheetResponse
     public string? UrinaryReflexologyWithAcidFruits { get; init; }
     public string? OtherIndications { get; init; }
     public string? Observations { get; init; }
+    public DateTime? ApprovedAtUtc { get; init; }
+    public Guid? ApprovedByUserId { get; init; }
     public bool IsActive { get; init; }
     public DateTime CreatedAtUtc { get; init; }
     public DateTime? UpdatedAtUtc { get; init; }
 }
-

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sanaclub.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Sanaclub.Infrastructure.Persistence;
 namespace Sanaclub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SanaclubDbContext))]
-    partial class SanaclubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260628140747_AddTreatmentSheetAutoApprovalFields")]
+    partial class AddTreatmentSheetAutoApprovalFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -36,6 +36,8 @@ public sealed class TreatmentSheet : AuditableEntity
     public string? Observations { get; private set; }
 
     public bool IsActive { get; private set; }
+    public DateTime? ApprovedAtUtc { get; private set; }
+    public Guid? ApprovedByUserId { get; private set; }
 
     private TreatmentSheet()
     {
@@ -193,6 +195,157 @@ public sealed class TreatmentSheet : AuditableEntity
         Observations = trimmedObservations;
 
         MarkAsUpdated(updatedByUserId);
+    }
+
+    public void UpdateMedicalIndicationAndApprove(
+        DateOnly? indicationDate,
+        TimeOnly? entryTime,
+        TimeOnly? exitTime,
+        string? assignedStaffName,
+        string? therapyName,
+        string? nervousSystemIndications,
+        bool decompressSpine,
+        bool decompressNeck,
+        bool decompressBack,
+        bool endocrineNerves,
+        bool endocrineDefenses,
+        bool endocrineHormones,
+        string? cardiovascularReflexologyWith,
+        string? digestiveColonReflexologyWith,
+        string? respiratoryReflexologyWith,
+        string? urinaryReflexologyWithAcidFruits,
+        string? otherIndications,
+        string? observations,
+        Guid draftStatusId,
+        Guid approvedStatusId,
+        Guid approvedByUserId)
+    {
+        if (!IsActive)
+        {
+            throw new DomainException("La hoja de tratamiento está inactiva.");
+        }
+
+        if (draftStatusId == Guid.Empty)
+        {
+            throw new DomainException("El identificador del estado borrador es obligatorio.");
+        }
+
+        if (approvedStatusId == Guid.Empty)
+        {
+            throw new DomainException("El identificador del estado aprobado es obligatorio.");
+        }
+
+        if (approvedByUserId == Guid.Empty)
+        {
+            throw new DomainException("El identificador del usuario aprobador es obligatorio.");
+        }
+
+        if (TreatmentStatusId != draftStatusId)
+        {
+            throw new DomainException("Solo se puede aprobar una hoja de tratamiento en estado borrador.");
+        }
+
+        var trimmedIndicationDate = indicationDate;
+        if (!trimmedIndicationDate.HasValue)
+        {
+            throw new DomainException("La fecha de indicación es obligatoria para aprobar la hoja.");
+        }
+
+        var trimmedAssignedStaffName = NormalizeOptionalText(assignedStaffName);
+        if (string.IsNullOrWhiteSpace(trimmedAssignedStaffName))
+        {
+            throw new DomainException("El nombre de la encargada es obligatorio para aprobar la hoja.");
+        }
+
+        if (trimmedAssignedStaffName?.Length > 200)
+        {
+            throw new DomainException("El nombre del personal asignado no puede superar los 200 caracteres.");
+        }
+
+        var trimmedTherapyName = NormalizeOptionalText(therapyName);
+        if (string.IsNullOrWhiteSpace(trimmedTherapyName))
+        {
+            throw new DomainException("El nombre de la terapia es obligatorio para aprobar la hoja.");
+        }
+
+        if (trimmedTherapyName?.Length > 200)
+        {
+            throw new DomainException("El nombre de terapia no puede superar los 200 caracteres.");
+        }
+
+        var trimmedNervousSystemIndications = NormalizeOptionalText(nervousSystemIndications);
+        if (trimmedNervousSystemIndications?.Length > 1000)
+        {
+            throw new DomainException("Las indicaciones del sistema nervioso no pueden superar los 1000 caracteres.");
+        }
+
+        var trimmedCardiovascularReflexologyWith = NormalizeOptionalText(cardiovascularReflexologyWith);
+        if (trimmedCardiovascularReflexologyWith?.Length > 500)
+        {
+            throw new DomainException(
+                "La indicación de reflexología cardiovascular no puede superar los 500 caracteres.");
+        }
+
+        var trimmedDigestiveColonReflexologyWith = NormalizeOptionalText(digestiveColonReflexologyWith);
+        if (trimmedDigestiveColonReflexologyWith?.Length > 500)
+        {
+            throw new DomainException(
+                "La indicación de reflexología de colon digestivo no puede superar los 500 caracteres.");
+        }
+
+        var trimmedRespiratoryReflexologyWith = NormalizeOptionalText(respiratoryReflexologyWith);
+        if (trimmedRespiratoryReflexologyWith?.Length > 500)
+        {
+            throw new DomainException("La indicación de reflexología respiratoria no puede superar los 500 caracteres.");
+        }
+
+        var trimmedUrinaryReflexologyWithAcidFruits = NormalizeOptionalText(urinaryReflexologyWithAcidFruits);
+        if (trimmedUrinaryReflexologyWithAcidFruits?.Length > 500)
+        {
+            throw new DomainException("La indicación de reflexología urinaria no puede superar los 500 caracteres.");
+        }
+
+        var trimmedOtherIndications = NormalizeOptionalText(otherIndications);
+        if (trimmedOtherIndications?.Length > 2000)
+        {
+            throw new DomainException("Otras indicaciones no puede superar los 2000 caracteres.");
+        }
+
+        var trimmedObservations = NormalizeOptionalText(observations);
+        if (trimmedObservations?.Length > 2000)
+        {
+            throw new DomainException("Las observaciones no pueden superar los 2000 caracteres.");
+        }
+
+        if (entryTime.HasValue && exitTime.HasValue && exitTime.Value < entryTime.Value)
+        {
+            throw new DomainException("La hora de salida no puede ser menor a la hora de entrada.");
+        }
+
+        IndicationDate = trimmedIndicationDate;
+        EntryTime = entryTime;
+        ExitTime = exitTime;
+        AssignedStaffName = trimmedAssignedStaffName;
+        TherapyName = trimmedTherapyName;
+        NervousSystemIndications = trimmedNervousSystemIndications;
+        DecompressSpine = decompressSpine;
+        DecompressNeck = decompressNeck;
+        DecompressBack = decompressBack;
+        EndocrineNerves = endocrineNerves;
+        EndocrineDefenses = endocrineDefenses;
+        EndocrineHormones = endocrineHormones;
+        CardiovascularReflexologyWith = trimmedCardiovascularReflexologyWith;
+        DigestiveColonReflexologyWith = trimmedDigestiveColonReflexologyWith;
+        RespiratoryReflexologyWith = trimmedRespiratoryReflexologyWith;
+        UrinaryReflexologyWithAcidFruits = trimmedUrinaryReflexologyWithAcidFruits;
+        OtherIndications = trimmedOtherIndications;
+        Observations = trimmedObservations;
+
+        TreatmentStatusId = approvedStatusId;
+        ApprovedAtUtc = DateTime.UtcNow;
+        ApprovedByUserId = approvedByUserId;
+
+        MarkAsUpdated(approvedByUserId);
     }
 
     private static string? NormalizeOptionalText(string? value)

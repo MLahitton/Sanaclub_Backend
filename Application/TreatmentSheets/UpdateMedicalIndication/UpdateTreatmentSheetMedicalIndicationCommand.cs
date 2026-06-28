@@ -1,4 +1,5 @@
 using MediatR;
+using System.Linq;
 using Sanaclub.Domain.Common;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Application.Common.Exceptions;
@@ -35,11 +36,14 @@ public sealed class UpdateTreatmentSheetMedicalIndicationCommandHandler :
     IRequestHandler<UpdateTreatmentSheetMedicalIndicationCommand, TreatmentSheetResponse>
 {
     private readonly ITreatmentSheetRepository _treatmentSheetRepository;
+    private readonly ICatalogRepository _catalogRepository;
 
     public UpdateTreatmentSheetMedicalIndicationCommandHandler(
-        ITreatmentSheetRepository treatmentSheetRepository)
+        ITreatmentSheetRepository treatmentSheetRepository,
+        ICatalogRepository catalogRepository)
     {
         _treatmentSheetRepository = treatmentSheetRepository;
+        _catalogRepository = catalogRepository;
     }
 
     public async Task<TreatmentSheetResponse> Handle(
@@ -68,9 +72,31 @@ public sealed class UpdateTreatmentSheetMedicalIndicationCommandHandler :
             throw new NotFoundException("La hoja de tratamiento no fue encontrada.");
         }
 
+        var draftStatusId = await _catalogRepository.GetTreatmentStatusIdByCodeAsync("DRAFT", cancellationToken);
+        if (!draftStatusId.HasValue)
+        {
+            throw new ConflictException("El estado DRAFT de tratamiento no está configurado.");
+        }
+
+        var approvedStatusId = await _catalogRepository.GetTreatmentStatusIdByCodeAsync("APPROVED", cancellationToken);
+        if (!approvedStatusId.HasValue)
+        {
+            throw new ConflictException("El estado APPROVED de tratamiento no está configurado.");
+        }
+
+        if (!treatmentSheet.IsActive)
+        {
+            throw new ConflictException("La hoja de tratamiento está inactiva.");
+        }
+
+        if (treatmentSheet.TreatmentStatusId != draftStatusId.Value)
+        {
+            throw new ConflictException("Solo se puede aprobar una hoja de tratamiento en estado borrador.");
+        }
+
         try
         {
-            treatmentSheet.UpdateMedicalIndication(
+            treatmentSheet.UpdateMedicalIndicationAndApprove(
                 request.IndicationDate,
                 request.EntryTime,
                 request.ExitTime,
@@ -89,10 +115,23 @@ public sealed class UpdateTreatmentSheetMedicalIndicationCommandHandler :
                 request.UrinaryReflexologyWithAcidFruits,
                 request.OtherIndications,
                 request.Observations,
+                draftStatusId.Value,
+                approvedStatusId.Value,
                 request.UpdatedByUserId);
         }
         catch (DomainException exception)
         {
+            var invalidStateMessages = new[]
+            {
+                "La hoja de tratamiento está inactiva.",
+                "Solo se puede aprobar una hoja de tratamiento en estado borrador."
+            };
+
+            if (invalidStateMessages.Contains(exception.Message))
+            {
+                throw new ConflictException(exception.Message);
+            }
+
             throw new AppValidationException("medicalIndication", exception.Message);
         }
 
@@ -130,6 +169,8 @@ public sealed class UpdateTreatmentSheetMedicalIndicationCommandHandler :
             UrinaryReflexologyWithAcidFruits = treatmentSheet.UrinaryReflexologyWithAcidFruits,
             OtherIndications = treatmentSheet.OtherIndications,
             Observations = treatmentSheet.Observations,
+            ApprovedAtUtc = treatmentSheet.ApprovedAtUtc,
+            ApprovedByUserId = treatmentSheet.ApprovedByUserId,
             IsActive = treatmentSheet.IsActive,
             CreatedAtUtc = treatmentSheet.CreatedAtUtc,
             UpdatedAtUtc = treatmentSheet.UpdatedAtUtc

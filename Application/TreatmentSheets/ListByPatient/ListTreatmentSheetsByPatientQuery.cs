@@ -82,10 +82,11 @@ public sealed class ListTreatmentSheetsByPatientQueryHandler :
             UrinaryReflexologyWithAcidFruits = treatmentSheet.UrinaryReflexologyWithAcidFruits,
             OtherIndications = treatmentSheet.OtherIndications,
             Observations = treatmentSheet.Observations,
+            ApprovedAtUtc = treatmentSheet.ApprovedAtUtc,
+            ApprovedByUserId = treatmentSheet.ApprovedByUserId,
             IsActive = treatmentSheet.IsActive,
             CreatedAtUtc = treatmentSheet.CreatedAtUtc,
             UpdatedAtUtc = treatmentSheet.UpdatedAtUtc
         };
     }
 }
-
