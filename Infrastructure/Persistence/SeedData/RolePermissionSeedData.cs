@@ -658,6 +658,12 @@ public static class RolePermissionSeedData
             GetPermissionId("catalogs.read"),
             "THERAPIST",
             "catalogs.read"),
+        new SeedRolePermission(
+            SeedId(123),
+            GetRoleId("THERAPIST"),
+            GetPermissionId("treatments.read"),
+            "THERAPIST",
+            "treatments.read"),
 
         new SeedRolePermission(
             SeedId(98),
@@ -700,7 +706,13 @@ public static class RolePermissionSeedData
             GetRoleId("AUDITOR"),
             GetPermissionId("patients.read"),
             "AUDITOR",
-            "patients.read")
+            "patients.read"),
+        new SeedRolePermission(
+            SeedId(124),
+            GetRoleId("AUDITOR"),
+            GetPermissionId("treatments.read"),
+            "AUDITOR",
+            "treatments.read")
     };
 
     public static IReadOnlyCollection<SeedRolePermission> RolePermissions => _rolePermissions;
