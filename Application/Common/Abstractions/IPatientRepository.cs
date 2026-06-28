@@ -21,6 +21,12 @@ public interface IPatientRepository
         Guid patientId,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<Patient>> SearchForClinicalSummaryAsync(
+        string? search,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<Patient>> ListAsync(
         string? search,
         bool? isActive,

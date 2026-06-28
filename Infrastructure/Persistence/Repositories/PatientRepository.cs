@@ -48,6 +48,25 @@ public sealed class PatientRepository : IPatientRepository
             .SingleOrDefaultAsync(x => x.Id == patientId, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Patient>> SearchForClinicalSummaryAsync(
+        string? search,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedSearch = string.IsNullOrWhiteSpace(search)
+            ? null
+            : search.Trim();
+
+        return await BuildSearchQuery(_context.Patients.AsNoTracking(), normalizedSearch, null, null)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .ThenBy(x => x.LastName)
+            .ThenBy(x => x.FirstName)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<Patient>> ListAsync(
         string? search,
         bool? isActive,
