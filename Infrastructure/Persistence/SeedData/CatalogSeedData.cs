@@ -281,6 +281,12 @@ public static class CatalogSeedData
             "Evolución en borrador.",
             10),
         new SeedCatalogItem(
+            new Guid("37000000-0000-0000-0000-000000000011"),
+            "COMPLETED",
+            "Completada",
+            "Evolución completada.",
+            15),
+        new SeedCatalogItem(
             new Guid("37000000-0000-0000-0000-000000000002"),
             "PENDING_MEDICAL_REVIEW",
             "Pendiente de revisión médica",

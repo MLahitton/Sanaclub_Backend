@@ -3,6 +3,7 @@ using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Domain.Auth;
 using Sanaclub.Domain.Catalogs;
 using Sanaclub.Domain.Consents;
+using Sanaclub.Domain.EvolutionSheets;
 using Sanaclub.Domain.Patients;
 using Sanaclub.Domain.TreatmentSheets;
 
@@ -30,6 +31,7 @@ public sealed class SanaclubDbContext : DbContext, ISanaclubDbContext
     public DbSet<ConsentStatus> ConsentStatuses => Set<ConsentStatus>();
     public DbSet<TreatmentStatus> TreatmentStatuses => Set<TreatmentStatus>();
     public DbSet<EvolutionStatus> EvolutionStatuses => Set<EvolutionStatus>();
+    public DbSet<EvolutionSheet> EvolutionSheets => Set<EvolutionSheet>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<InformedConsent> InformedConsents => Set<InformedConsent>();
     public DbSet<TreatmentSheet> TreatmentSheets => Set<TreatmentSheet>();

@@ -194,6 +194,24 @@ public static class RolePermissionSeedData
             "ADMIN",
             "settings.manage"),
         new SeedRolePermission(
+            SeedId(127),
+            GetRoleId("ADMIN"),
+            GetPermissionId("evolutions.create"),
+            "ADMIN",
+            "evolutions.create"),
+        new SeedRolePermission(
+            SeedId(128),
+            GetRoleId("ADMIN"),
+            GetPermissionId("evolutions.read"),
+            "ADMIN",
+            "evolutions.read"),
+        new SeedRolePermission(
+            SeedId(129),
+            GetRoleId("ADMIN"),
+            GetPermissionId("evolutions.update_draft"),
+            "ADMIN",
+            "evolutions.update_draft"),
+        new SeedRolePermission(
             SeedId(119),
             GetRoleId("ADMIN"),
             GetPermissionId("treatments.create"),
@@ -664,6 +682,12 @@ public static class RolePermissionSeedData
             GetPermissionId("treatments.read"),
             "THERAPIST",
             "treatments.read"),
+        new SeedRolePermission(
+            SeedId(125),
+            GetRoleId("THERAPIST"),
+            GetPermissionId("evolutions.read"),
+            "THERAPIST",
+            "evolutions.read"),
 
         new SeedRolePermission(
             SeedId(98),
@@ -712,7 +736,13 @@ public static class RolePermissionSeedData
             GetRoleId("AUDITOR"),
             GetPermissionId("treatments.read"),
             "AUDITOR",
-            "treatments.read")
+            "treatments.read"),
+        new SeedRolePermission(
+            SeedId(126),
+            GetRoleId("AUDITOR"),
+            GetPermissionId("evolutions.read"),
+            "AUDITOR",
+            "evolutions.read")
     };
 
     public static IReadOnlyCollection<SeedRolePermission> RolePermissions => _rolePermissions;

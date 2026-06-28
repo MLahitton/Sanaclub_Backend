@@ -23,4 +23,8 @@ public interface ICatalogRepository
     Task<Guid?> GetTreatmentStatusIdByCodeAsync(
         string code,
         CancellationToken cancellationToken = default);
+
+    Task<Guid?> GetEvolutionStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default);
 }

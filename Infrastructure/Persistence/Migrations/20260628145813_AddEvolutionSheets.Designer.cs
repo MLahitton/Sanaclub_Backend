@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sanaclub.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Sanaclub.Infrastructure.Persistence;
 namespace Sanaclub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SanaclubDbContext))]
-    partial class SanaclubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260628145813_AddEvolutionSheets")]
+    partial class AddEvolutionSheets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1119,7 +1122,7 @@ namespace Sanaclub.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("therapy_number");
 
-                    b.Property<Guid>("TreatmentSheetId")
+                    b.Property<Guid?>("TreatmentSheetId")
                         .HasColumnType("uuid")
                         .HasColumnName("treatment_sheet_id");
 
@@ -1519,8 +1522,7 @@ namespace Sanaclub.Infrastructure.Persistence.Migrations
                     b.HasOne("Sanaclub.Domain.TreatmentSheets.TreatmentSheet", null)
                         .WithMany()
                         .HasForeignKey("TreatmentSheetId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Sanaclub.Domain.Patients.Patient", b =>
