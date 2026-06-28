@@ -24,13 +24,19 @@ public sealed class PatientClinicalSummaryPatientResponse
 {
     public Guid Id { get; init; }
     public Guid IdentificationTypeId { get; init; }
+    public string? IdentificationTypeCode { get; init; }
+    public string? IdentificationTypeName { get; init; }
     public string IdentificationNumber { get; init; } = string.Empty;
     public string FirstName { get; init; } = string.Empty;
     public string LastName { get; init; } = string.Empty;
     public string FullName { get; init; } = string.Empty;
     public DateOnly? BirthDate { get; init; }
     public Guid? GenderId { get; init; }
+    public string? GenderCode { get; init; }
+    public string? GenderName { get; init; }
     public Guid? CivilStatusId { get; init; }
+    public string? CivilStatusCode { get; init; }
+    public string? CivilStatusName { get; init; }
     public string? PhoneNumber { get; init; }
     public string? Email { get; init; }
     public string? Address { get; init; }
@@ -40,6 +46,8 @@ public sealed class PatientClinicalSummaryPatientResponse
     public string? EmergencyContactRelationship { get; init; }
     public string? EmergencyContactPhone { get; init; }
     public Guid PatientStatusId { get; init; }
+    public string? PatientStatusCode { get; init; }
+    public string? PatientStatusName { get; init; }
     public bool IsActive { get; init; }
     public DateTime CreatedAtUtc { get; init; }
 }
@@ -57,7 +65,11 @@ public sealed class PatientClinicalSummaryConsentResponse
 {
     public Guid Id { get; init; }
     public Guid DocumentTypeId { get; init; }
+    public string? DocumentTypeCode { get; init; }
+    public string? DocumentTypeName { get; init; }
     public Guid ConsentStatusId { get; init; }
+    public string? ConsentStatusCode { get; init; }
+    public string? ConsentStatusName { get; init; }
     public string Title { get; init; } = string.Empty;
     public string? Description { get; init; }
     public DateTime? SignedAtUtc { get; init; }
@@ -72,6 +84,8 @@ public sealed class PatientClinicalSummaryTreatmentSheetResponse
     public Guid Id { get; init; }
     public Guid PatientId { get; init; }
     public Guid TreatmentStatusId { get; init; }
+    public string? TreatmentStatusCode { get; init; }
+    public string? TreatmentStatusName { get; init; }
     public string? TreatmentNumber { get; init; }
     public DateOnly? ConsultationDate { get; init; }
     public string? EpsTreatingDoctorDiagnosis { get; init; }
@@ -107,6 +121,8 @@ public sealed class PatientClinicalSummaryEvolutionSheetResponse
     public Guid PatientId { get; init; }
     public Guid TreatmentSheetId { get; init; }
     public Guid EvolutionStatusId { get; init; }
+    public string? EvolutionStatusCode { get; init; }
+    public string? EvolutionStatusName { get; init; }
     public string? TherapyNumber { get; init; }
     public DateOnly? EvolutionDate { get; init; }
     public TimeOnly? EntryTime { get; init; }

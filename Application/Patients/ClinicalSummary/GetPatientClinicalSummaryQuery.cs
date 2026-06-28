@@ -1,10 +1,14 @@
 using MediatR;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Application.Common.Exceptions;
+using Sanaclub.Application.Catalogs.Common;
 using Sanaclub.Domain.Consents;
 using Sanaclub.Domain.EvolutionSheets;
 using Sanaclub.Domain.Patients;
 using Sanaclub.Domain.TreatmentSheets;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sanaclub.Application.Patients.ClinicalSummary;
 
@@ -20,17 +24,20 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
     private readonly IConsentRepository _consentRepository;
     private readonly ITreatmentSheetRepository _treatmentSheetRepository;
     private readonly IEvolutionSheetRepository _evolutionSheetRepository;
+    private readonly ICatalogRepository _catalogRepository;
 
     public GetPatientClinicalSummaryQueryHandler(
         IPatientRepository patientRepository,
         IConsentRepository consentRepository,
         ITreatmentSheetRepository treatmentSheetRepository,
-        IEvolutionSheetRepository evolutionSheetRepository)
+        IEvolutionSheetRepository evolutionSheetRepository,
+        ICatalogRepository catalogRepository)
     {
         _patientRepository = patientRepository;
         _consentRepository = consentRepository;
         _treatmentSheetRepository = treatmentSheetRepository;
         _evolutionSheetRepository = evolutionSheetRepository;
+        _catalogRepository = catalogRepository;
     }
 
     public async Task<PatientClinicalSummaryResponse> Handle(
@@ -50,6 +57,24 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
             throw new NotFoundException("El paciente no fue encontrado.");
         }
 
+        var identificationTypes = await _catalogRepository.ListIdentificationTypesAsync(cancellationToken);
+        var genders = await _catalogRepository.ListGendersAsync(cancellationToken);
+        var civilStatuses = await _catalogRepository.ListCivilStatusesAsync(cancellationToken);
+        var patientStatuses = await _catalogRepository.ListPatientStatusesAsync(cancellationToken);
+        var documentTypes = await _catalogRepository.ListDocumentTypesAsync(cancellationToken);
+        var consentStatuses = await _catalogRepository.ListConsentStatusesAsync(cancellationToken);
+        var treatmentStatuses = await _catalogRepository.ListTreatmentStatusesAsync(cancellationToken);
+        var evolutionStatuses = await _catalogRepository.ListEvolutionStatusesAsync(cancellationToken);
+
+        var identificationTypeById = identificationTypes.ToDictionary(x => x.Id);
+        var genderById = genders.ToDictionary(x => x.Id);
+        var civilStatusById = civilStatuses.ToDictionary(x => x.Id);
+        var patientStatusById = patientStatuses.ToDictionary(x => x.Id);
+        var documentTypeById = documentTypes.ToDictionary(x => x.Id);
+        var consentStatusById = consentStatuses.ToDictionary(x => x.Id);
+        var treatmentStatusById = treatmentStatuses.ToDictionary(x => x.Id);
+        var evolutionStatusById = evolutionStatuses.ToDictionary(x => x.Id);
+
         var consents = await _consentRepository.ListByPatientIdAsync(
             request.PatientId,
             cancellationToken);
@@ -63,12 +88,12 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
             cancellationToken);
 
         var treatmentSheetResponses = treatmentSheets
-            .Select(MapToTreatmentSheetResponse)
+            .Select(x => MapToTreatmentSheetResponse(x, treatmentStatusById))
             .ToList()
             .AsReadOnly();
 
         var evolutionSheetResponses = evolutionSheets
-            .Select(MapToEvolutionSheetResponse)
+            .Select(x => MapToEvolutionSheetResponse(x, evolutionStatusById))
             .ToList()
             .AsReadOnly();
 
@@ -84,7 +109,12 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
 
         return new PatientClinicalSummaryResponse
         {
-            Patient = MapToPatientResponse(patient),
+            Patient = MapToPatientResponse(
+                patient,
+                identificationTypeById,
+                genderById,
+                civilStatusById,
+                patientStatusById),
             Counts = new PatientClinicalSummaryCountsResponse
             {
                 TotalConsents = consents.Count,
@@ -94,7 +124,7 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
                 TotalCompletedEvolutionSheets = evolutionSheets.Count(x => x.CompletedAtUtc.HasValue)
             },
             Consents = consents
-                .Select(MapToConsentResponse)
+                .Select(x => MapToConsentResponse(x, documentTypeById, consentStatusById))
                 .ToList()
                 .AsReadOnly(),
             TreatmentSheets = treatmentSheetResponses,
@@ -104,19 +134,46 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
         };
     }
 
-    private static PatientClinicalSummaryPatientResponse MapToPatientResponse(Patient patient)
+    private static PatientClinicalSummaryPatientResponse MapToPatientResponse(
+        Patient patient,
+        Dictionary<Guid, CatalogItemResponse> identificationTypeById,
+        Dictionary<Guid, CatalogItemResponse> genderById,
+        Dictionary<Guid, CatalogItemResponse> civilStatusById,
+        Dictionary<Guid, CatalogItemResponse> patientStatusById)
     {
+        var (identificationTypeCode, identificationTypeName) = GetCatalogCodeAndName(
+            identificationTypeById,
+            patient.IdentificationTypeId);
+
+        var (genderCode, genderName) = GetCatalogCodeAndName(
+            genderById,
+            patient.GenderId);
+
+        var (civilStatusCode, civilStatusName) = GetCatalogCodeAndName(
+            civilStatusById,
+            patient.CivilStatusId);
+
+        var (patientStatusCode, patientStatusName) = GetCatalogCodeAndName(
+            patientStatusById,
+            patient.PatientStatusId);
+
         return new PatientClinicalSummaryPatientResponse
         {
             Id = patient.Id,
             IdentificationTypeId = patient.IdentificationTypeId,
+            IdentificationTypeCode = identificationTypeCode,
+            IdentificationTypeName = identificationTypeName,
             IdentificationNumber = patient.IdentificationNumber,
             FirstName = patient.FirstName,
             LastName = patient.LastName,
             FullName = patient.FullName,
             BirthDate = patient.BirthDate,
             GenderId = patient.GenderId,
+            GenderCode = genderCode,
+            GenderName = genderName,
             CivilStatusId = patient.CivilStatusId,
+            CivilStatusCode = civilStatusCode,
+            CivilStatusName = civilStatusName,
             PhoneNumber = patient.PhoneNumber,
             Email = patient.Email,
             Address = patient.Address,
@@ -126,18 +183,35 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
             EmergencyContactRelationship = patient.EmergencyContactRelationship,
             EmergencyContactPhone = patient.EmergencyContactPhone,
             PatientStatusId = patient.PatientStatusId,
+            PatientStatusCode = patientStatusCode,
+            PatientStatusName = patientStatusName,
             IsActive = patient.IsActive,
             CreatedAtUtc = patient.CreatedAtUtc
         };
     }
 
-    private static PatientClinicalSummaryConsentResponse MapToConsentResponse(InformedConsent consent)
+    private static PatientClinicalSummaryConsentResponse MapToConsentResponse(
+        InformedConsent consent,
+        Dictionary<Guid, CatalogItemResponse> documentTypeById,
+        Dictionary<Guid, CatalogItemResponse> consentStatusById)
     {
+        var (documentTypeCode, documentTypeName) = GetCatalogCodeAndName(
+            documentTypeById,
+            consent.DocumentTypeId);
+
+        var (consentStatusCode, consentStatusName) = GetCatalogCodeAndName(
+            consentStatusById,
+            consent.ConsentStatusId);
+
         return new PatientClinicalSummaryConsentResponse
         {
             Id = consent.Id,
             DocumentTypeId = consent.DocumentTypeId,
+            DocumentTypeCode = documentTypeCode,
+            DocumentTypeName = documentTypeName,
             ConsentStatusId = consent.ConsentStatusId,
+            ConsentStatusCode = consentStatusCode,
+            ConsentStatusName = consentStatusName,
             Title = consent.Title,
             Description = consent.Description,
             SignedAtUtc = consent.SignedAtUtc,
@@ -148,13 +222,21 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
         };
     }
 
-    private static PatientClinicalSummaryTreatmentSheetResponse MapToTreatmentSheetResponse(TreatmentSheet treatmentSheet)
+    private static PatientClinicalSummaryTreatmentSheetResponse MapToTreatmentSheetResponse(
+        TreatmentSheet treatmentSheet,
+        Dictionary<Guid, CatalogItemResponse> treatmentStatusById)
     {
+        var (treatmentStatusCode, treatmentStatusName) = GetCatalogCodeAndName(
+            treatmentStatusById,
+            treatmentSheet.TreatmentStatusId);
+
         return new PatientClinicalSummaryTreatmentSheetResponse
         {
             Id = treatmentSheet.Id,
             PatientId = treatmentSheet.PatientId,
             TreatmentStatusId = treatmentSheet.TreatmentStatusId,
+            TreatmentStatusCode = treatmentStatusCode,
+            TreatmentStatusName = treatmentStatusName,
             TreatmentNumber = treatmentSheet.TreatmentNumber,
             ConsultationDate = treatmentSheet.ConsultationDate,
             EpsTreatingDoctorDiagnosis = treatmentSheet.EpsTreatingDoctorDiagnosis,
@@ -185,14 +267,22 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
         };
     }
 
-    private static PatientClinicalSummaryEvolutionSheetResponse MapToEvolutionSheetResponse(EvolutionSheet evolutionSheet)
+    private static PatientClinicalSummaryEvolutionSheetResponse MapToEvolutionSheetResponse(
+        EvolutionSheet evolutionSheet,
+        Dictionary<Guid, CatalogItemResponse> evolutionStatusById)
     {
+        var (evolutionStatusCode, evolutionStatusName) = GetCatalogCodeAndName(
+            evolutionStatusById,
+            evolutionSheet.EvolutionStatusId);
+
         return new PatientClinicalSummaryEvolutionSheetResponse
         {
             Id = evolutionSheet.Id,
             PatientId = evolutionSheet.PatientId,
             TreatmentSheetId = evolutionSheet.TreatmentSheetId,
             EvolutionStatusId = evolutionSheet.EvolutionStatusId,
+            EvolutionStatusCode = evolutionStatusCode,
+            EvolutionStatusName = evolutionStatusName,
             TherapyNumber = evolutionSheet.TherapyNumber,
             EvolutionDate = evolutionSheet.EvolutionDate,
             EntryTime = evolutionSheet.EntryTime,
@@ -207,5 +297,19 @@ public sealed class GetPatientClinicalSummaryQueryHandler :
             CreatedAtUtc = evolutionSheet.CreatedAtUtc,
             UpdatedAtUtc = evolutionSheet.UpdatedAtUtc
         };
+    }
+
+    private static (string? code, string? name) GetCatalogCodeAndName(
+        Dictionary<Guid, CatalogItemResponse> catalogById,
+        Guid? id)
+    {
+        if (!id.HasValue)
+        {
+            return (null, null);
+        }
+
+        return catalogById.TryGetValue(id.Value, out var item)
+            ? (item.Code, item.Name)
+            : (null, null);
     }
 }

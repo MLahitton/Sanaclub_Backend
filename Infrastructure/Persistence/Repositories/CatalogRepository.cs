@@ -90,6 +90,82 @@ public sealed class CatalogRepository : ICatalogRepository
         return items;
     }
 
+    public async Task<IReadOnlyCollection<CatalogItemResponse>> ListDocumentTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var items = await _context.DocumentTypes
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.SortOrder)
+            .ThenBy(x => x.Name)
+            .Select(x => new CatalogItemResponse
+            {
+                Id = x.Id,
+                Code = x.Code,
+                Name = x.Name
+            })
+            .ToListAsync(cancellationToken);
+
+        return items;
+    }
+
+    public async Task<IReadOnlyCollection<CatalogItemResponse>> ListConsentStatusesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var items = await _context.ConsentStatuses
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.SortOrder)
+            .ThenBy(x => x.Name)
+            .Select(x => new CatalogItemResponse
+            {
+                Id = x.Id,
+                Code = x.Code,
+                Name = x.Name
+            })
+            .ToListAsync(cancellationToken);
+
+        return items;
+    }
+
+    public async Task<IReadOnlyCollection<CatalogItemResponse>> ListTreatmentStatusesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var items = await _context.TreatmentStatuses
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.SortOrder)
+            .ThenBy(x => x.Name)
+            .Select(x => new CatalogItemResponse
+            {
+                Id = x.Id,
+                Code = x.Code,
+                Name = x.Name
+            })
+            .ToListAsync(cancellationToken);
+
+        return items;
+    }
+
+    public async Task<IReadOnlyCollection<CatalogItemResponse>> ListEvolutionStatusesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var items = await _context.EvolutionStatuses
+            .AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.SortOrder)
+            .ThenBy(x => x.Name)
+            .Select(x => new CatalogItemResponse
+            {
+                Id = x.Id,
+                Code = x.Code,
+                Name = x.Name
+            })
+            .ToListAsync(cancellationToken);
+
+        return items;
+    }
+
     public async Task<Guid?> GetConsentStatusIdByCodeAsync(
         string code,
         CancellationToken cancellationToken = default)
