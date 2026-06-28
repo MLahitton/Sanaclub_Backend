@@ -67,6 +67,7 @@ public static class DependencyInjection
         services.AddScoped<IConsentRepository, ConsentRepository>();
         services.AddScoped<ITreatmentSheetRepository, TreatmentSheetRepository>();
         services.AddScoped<IEvolutionSheetRepository, EvolutionSheetRepository>();
+        services.AddScoped<IGeneratedDocumentRepository, GeneratedDocumentRepository>();
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();
