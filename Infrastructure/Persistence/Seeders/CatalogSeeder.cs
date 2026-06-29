@@ -21,7 +21,8 @@ public sealed class CatalogSeeder : IDatabaseSeeder
         "patient_statuses",
         "consent_statuses",
         "treatment_statuses",
-        "evolution_statuses"
+        "evolution_statuses",
+        "appointment_statuses"
     };
 
     public CatalogSeeder(SanaclubDbContext context)
@@ -69,6 +70,11 @@ public sealed class CatalogSeeder : IDatabaseSeeder
         await SeedCatalogItemsAsync(
             "evolution_statuses",
             CatalogSeedData.EvolutionStatuses,
+            cancellationToken);
+
+        await SeedCatalogItemsAsync(
+            "appointment_statuses",
+            CatalogSeedData.AppointmentStatuses,
             cancellationToken);
     }
 

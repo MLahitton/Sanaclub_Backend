@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sanaclub.Application.Common.Abstractions;
+using Sanaclub.Domain.Appointments;
 using Sanaclub.Domain.Auth;
 using Sanaclub.Domain.Catalogs;
 using Sanaclub.Domain.Consents;
@@ -32,10 +33,12 @@ public sealed class SanaclubDbContext : DbContext, ISanaclubDbContext
     public DbSet<ConsentStatus> ConsentStatuses => Set<ConsentStatus>();
     public DbSet<TreatmentStatus> TreatmentStatuses => Set<TreatmentStatus>();
     public DbSet<EvolutionStatus> EvolutionStatuses => Set<EvolutionStatus>();
+    public DbSet<AppointmentStatus> AppointmentStatuses => Set<AppointmentStatus>();
     public DbSet<EvolutionSheet> EvolutionSheets => Set<EvolutionSheet>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<InformedConsent> InformedConsents => Set<InformedConsent>();
     public DbSet<TreatmentSheet> TreatmentSheets => Set<TreatmentSheet>();
+    public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<GeneratedDocument> GeneratedDocuments => Set<GeneratedDocument>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

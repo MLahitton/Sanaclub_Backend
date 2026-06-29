@@ -342,6 +342,29 @@ public static class CatalogSeedData
             100)
     };
 
+    private static readonly SeedCatalogItem[] _appointmentStatuses =
+    new[]
+    {
+        new SeedCatalogItem(
+            new Guid("38000000-0000-0000-0000-000000000001"),
+            "SCHEDULED",
+            "Agendada",
+            "Cita agendada.",
+            10),
+        new SeedCatalogItem(
+            new Guid("38000000-0000-0000-0000-000000000002"),
+            "CONFIRMED",
+            "Confirmada",
+            "Cita confirmada.",
+            20),
+        new SeedCatalogItem(
+            new Guid("38000000-0000-0000-0000-000000000003"),
+            "CANCELLED",
+            "Cancelada",
+            "Cita cancelada.",
+            30)
+    };
+
     public static IReadOnlyCollection<SeedCatalogItem> IdentificationTypes => _identificationTypes;
     public static IReadOnlyCollection<SeedCatalogItem> Genders => _genders;
     public static IReadOnlyCollection<SeedCatalogItem> CivilStatuses => _civilStatuses;
@@ -350,4 +373,5 @@ public static class CatalogSeedData
     public static IReadOnlyCollection<SeedCatalogItem> ConsentStatuses => _consentStatuses;
     public static IReadOnlyCollection<SeedCatalogItem> TreatmentStatuses => _treatmentStatuses;
     public static IReadOnlyCollection<SeedCatalogItem> EvolutionStatuses => _evolutionStatuses;
+    public static IReadOnlyCollection<SeedCatalogItem> AppointmentStatuses => _appointmentStatuses;
 }

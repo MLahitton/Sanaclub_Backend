@@ -253,6 +253,36 @@ public static class RolePermissionSeedData
             GetPermissionId("treatments.update_medical_indication"),
             "ADMIN",
             "treatments.update_medical_indication"),
+        new SeedRolePermission(
+            SeedId(134),
+            GetRoleId("ADMIN"),
+            GetPermissionId("appointments.read"),
+            "ADMIN",
+            "appointments.read"),
+        new SeedRolePermission(
+            SeedId(135),
+            GetRoleId("ADMIN"),
+            GetPermissionId("appointments.create"),
+            "ADMIN",
+            "appointments.create"),
+        new SeedRolePermission(
+            SeedId(136),
+            GetRoleId("ADMIN"),
+            GetPermissionId("appointments.update"),
+            "ADMIN",
+            "appointments.update"),
+        new SeedRolePermission(
+            SeedId(137),
+            GetRoleId("ADMIN"),
+            GetPermissionId("appointments.confirm"),
+            "ADMIN",
+            "appointments.confirm"),
+        new SeedRolePermission(
+            SeedId(138),
+            GetRoleId("ADMIN"),
+            GetPermissionId("appointments.cancel"),
+            "ADMIN",
+            "appointments.cancel"),
 
         new SeedRolePermission(
             SeedId(26),
@@ -506,6 +536,12 @@ public static class RolePermissionSeedData
             GetPermissionId("catalogs.read"),
             "DOCTOR",
             "catalogs.read"),
+        new SeedRolePermission(
+            SeedId(139),
+            GetRoleId("DOCTOR"),
+            GetPermissionId("appointments.read"),
+            "DOCTOR",
+            "appointments.read"),
 
         new SeedRolePermission(
             SeedId(67),
@@ -669,6 +705,36 @@ public static class RolePermissionSeedData
             GetPermissionId("catalogs.read"),
             "SECRETARY",
             "catalogs.read"),
+        new SeedRolePermission(
+            SeedId(140),
+            GetRoleId("SECRETARY"),
+            GetPermissionId("appointments.read"),
+            "SECRETARY",
+            "appointments.read"),
+        new SeedRolePermission(
+            SeedId(141),
+            GetRoleId("SECRETARY"),
+            GetPermissionId("appointments.create"),
+            "SECRETARY",
+            "appointments.create"),
+        new SeedRolePermission(
+            SeedId(142),
+            GetRoleId("SECRETARY"),
+            GetPermissionId("appointments.update"),
+            "SECRETARY",
+            "appointments.update"),
+        new SeedRolePermission(
+            SeedId(143),
+            GetRoleId("SECRETARY"),
+            GetPermissionId("appointments.confirm"),
+            "SECRETARY",
+            "appointments.confirm"),
+        new SeedRolePermission(
+            SeedId(144),
+            GetRoleId("SECRETARY"),
+            GetPermissionId("appointments.cancel"),
+            "SECRETARY",
+            "appointments.cancel"),
 
         new SeedRolePermission(
             SeedId(94),
@@ -712,6 +778,12 @@ public static class RolePermissionSeedData
             GetPermissionId("evolutions.read"),
             "THERAPIST",
             "evolutions.read"),
+        new SeedRolePermission(
+            SeedId(145),
+            GetRoleId("THERAPIST"),
+            GetPermissionId("appointments.read"),
+            "THERAPIST",
+            "appointments.read"),
 
         new SeedRolePermission(
             SeedId(98),
@@ -766,7 +838,13 @@ public static class RolePermissionSeedData
             GetRoleId("AUDITOR"),
             GetPermissionId("evolutions.read"),
             "AUDITOR",
-            "evolutions.read")
+            "evolutions.read"),
+        new SeedRolePermission(
+            SeedId(146),
+            GetRoleId("AUDITOR"),
+            GetPermissionId("appointments.read"),
+            "AUDITOR",
+            "appointments.read")
     };
 
     public static IReadOnlyCollection<SeedRolePermission> RolePermissions => _rolePermissions;

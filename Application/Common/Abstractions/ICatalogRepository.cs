@@ -40,6 +40,10 @@ public interface ICatalogRepository
         string code,
         CancellationToken cancellationToken = default);
 
+    Task<Guid?> GetAppointmentStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default);
+
     Task<bool> ExistsIdentificationTypeAsync(
         Guid id,
         CancellationToken cancellationToken = default);

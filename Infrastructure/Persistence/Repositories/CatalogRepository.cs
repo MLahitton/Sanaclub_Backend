@@ -211,6 +211,21 @@ public sealed class CatalogRepository : ICatalogRepository
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<Guid?> GetAppointmentStatusIdByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedCode = string.IsNullOrWhiteSpace(code)
+            ? string.Empty
+            : code.Trim().ToUpperInvariant();
+
+        return await _context.AppointmentStatuses
+            .AsNoTracking()
+            .Where(x => x.IsActive && x.Code == normalizedCode)
+            .Select(x => (Guid?)x.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<bool> ExistsIdentificationTypeAsync(
         Guid id,
         CancellationToken cancellationToken = default)

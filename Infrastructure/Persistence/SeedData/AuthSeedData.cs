@@ -411,7 +411,37 @@ public static class AuthSeedData
             "settings.manage",
             "Gestionar configuración",
             "settings",
-            "Permite modificar configuración del sistema.")
+            "Permite modificar configuración del sistema."),
+        new SeedPermission(
+            new Guid("20000000-0000-0000-0000-000000000063"),
+            "appointments.read",
+            "Consultar citas",
+            "appointments",
+            "Permite consultar citas de pacientes."),
+        new SeedPermission(
+            new Guid("20000000-0000-0000-0000-000000000064"),
+            "appointments.create",
+            "Crear citas",
+            "appointments",
+            "Permite agendar citas de pacientes."),
+        new SeedPermission(
+            new Guid("20000000-0000-0000-0000-000000000065"),
+            "appointments.update",
+            "Actualizar citas",
+            "appointments",
+            "Permite editar o reagendar citas de pacientes."),
+        new SeedPermission(
+            new Guid("20000000-0000-0000-0000-000000000066"),
+            "appointments.confirm",
+            "Confirmar citas",
+            "appointments",
+            "Permite confirmar citas de pacientes."),
+        new SeedPermission(
+            new Guid("20000000-0000-0000-0000-000000000067"),
+            "appointments.cancel",
+            "Cancelar citas",
+            "appointments",
+            "Permite cancelar citas de pacientes.")
     };
 
     public static IReadOnlyCollection<SeedRole> Roles => _roles;
