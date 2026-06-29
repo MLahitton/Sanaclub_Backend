@@ -56,6 +56,18 @@ public static class RolePermissionSeedData
             "ADMIN",
             "users.activate"),
         new SeedRolePermission(
+            SeedId(132),
+            GetRoleId("ADMIN"),
+            GetPermissionId("users.change_status"),
+            "ADMIN",
+            "users.change_status"),
+        new SeedRolePermission(
+            SeedId(133),
+            GetRoleId("ADMIN"),
+            GetPermissionId("users.reset_password"),
+            "ADMIN",
+            "users.reset_password"),
+        new SeedRolePermission(
             SeedId(9),
             GetRoleId("ADMIN"),
             GetPermissionId("roles.read"),

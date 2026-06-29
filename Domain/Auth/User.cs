@@ -82,6 +82,23 @@ public sealed class User : AuditableEntity
         LastLoginAtUtc = loggedAtUtc;
     }
 
+    public void UpdateFullName(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
+            throw new DomainException("El nombre completo es obligatorio.");
+        }
+
+        var trimmedFullName = fullName.Trim();
+
+        if (trimmedFullName.Length > 200)
+        {
+            throw new DomainException("El nombre completo no puede superar los 200 caracteres.");
+        }
+
+        FullName = trimmedFullName;
+    }
+
     public void CompleteRequiredPasswordChange()
     {
         MustChangePassword = false;
