@@ -116,6 +116,7 @@ public static class DependencyInjection
         services.AddScoped<IEvolutionSheetRepository, EvolutionSheetRepository>();
         services.AddScoped<IGeneratedDocumentRepository, GeneratedDocumentRepository>();
         services.AddScoped<ITreatmentSheetPdfGenerator, TreatmentSheetPdfGenerator>();
+        services.AddScoped<IEvolutionSheetPdfGenerator, EvolutionSheetPdfGenerator>();
 
 
         services.AddScoped<AuthSeeder>();
