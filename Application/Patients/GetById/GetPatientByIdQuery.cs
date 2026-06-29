@@ -55,6 +55,11 @@ public sealed class GetPatientByIdQueryHandler : IRequestHandler<GetPatientByIdQ
             PhoneNumber = patient.PhoneNumber,
             Email = patient.Email,
             Address = patient.Address,
+            CityOrMunicipality = patient.CityOrMunicipality,
+            Occupation = patient.Occupation,
+            EmergencyContactName = patient.EmergencyContactName,
+            EmergencyContactRelationship = patient.EmergencyContactRelationship,
+            EmergencyContactPhone = patient.EmergencyContactPhone,
             PatientStatusId = patient.PatientStatusId,
             IsActive = patient.IsActive,
             CreatedAtUtc = patient.CreatedAtUtc

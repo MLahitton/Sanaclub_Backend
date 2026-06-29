@@ -210,4 +210,60 @@ public sealed class CatalogRepository : ICatalogRepository
             .Select(x => (Guid?)x.Id)
             .SingleOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<bool> ExistsIdentificationTypeAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return false;
+        }
+
+        return await _context.IdentificationTypes
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == id && x.IsActive, cancellationToken);
+    }
+
+    public async Task<bool> ExistsGenderAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return false;
+        }
+
+        return await _context.Genders
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == id && x.IsActive, cancellationToken);
+    }
+
+    public async Task<bool> ExistsCivilStatusAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return false;
+        }
+
+        return await _context.CivilStatuses
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == id && x.IsActive, cancellationToken);
+    }
+
+    public async Task<bool> ExistsPatientStatusAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        if (id == Guid.Empty)
+        {
+            return false;
+        }
+
+        return await _context.PatientStatuses
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == id && x.IsActive, cancellationToken);
+    }
 }

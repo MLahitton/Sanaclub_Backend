@@ -42,10 +42,14 @@ public sealed class CreatePatientCommandHandler : IRequestHandler<CreatePatientC
     private const int MinNameLength = 1;
 
     private readonly IPatientRepository _patientRepository;
+    private readonly ICatalogRepository _catalogRepository;
 
-    public CreatePatientCommandHandler(IPatientRepository patientRepository)
+    public CreatePatientCommandHandler(
+        IPatientRepository patientRepository,
+        ICatalogRepository catalogRepository)
     {
         _patientRepository = patientRepository;
+        _catalogRepository = catalogRepository;
     }
 
     public async Task<PatientResponse> Handle(CreatePatientCommand request, CancellationToken cancellationToken)
@@ -208,6 +212,44 @@ public sealed class CreatePatientCommandHandler : IRequestHandler<CreatePatientC
             throw new AppValidationException(
                 "patientStatusId",
                 "El estado del paciente es obligatorio.");
+        }
+
+        if (!await _catalogRepository.ExistsIdentificationTypeAsync(
+                request.IdentificationTypeId,
+                cancellationToken))
+        {
+            throw new AppValidationException(
+                "identificationTypeId",
+                "El tipo de identificación seleccionado no existe.");
+        }
+
+        if (request.GenderId is not null
+            && !await _catalogRepository.ExistsGenderAsync(
+                request.GenderId.Value,
+                cancellationToken))
+        {
+            throw new AppValidationException(
+                "genderId",
+                "El género seleccionado no existe.");
+        }
+
+        if (request.CivilStatusId is not null
+            && !await _catalogRepository.ExistsCivilStatusAsync(
+                request.CivilStatusId.Value,
+                cancellationToken))
+        {
+            throw new AppValidationException(
+                "civilStatusId",
+                "El estado civil seleccionado no existe.");
+        }
+
+        if (!await _catalogRepository.ExistsPatientStatusAsync(
+                request.PatientStatusId,
+                cancellationToken))
+        {
+            throw new AppValidationException(
+                "patientStatusId",
+                "El estado del paciente seleccionado no existe.");
         }
 
         if (trimmedFirstName.Length < MinNameLength)

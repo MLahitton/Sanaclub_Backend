@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace Sanaclub.Api.Contracts.Patients;
 
@@ -11,6 +12,8 @@ public sealed class UpdatePatientRequest
     public DateOnly? BirthDate { get; init; }
     public Guid? GenderId { get; init; }
     public Guid? CivilStatusId { get; init; }
+    [JsonPropertyName("phone")]
+    public string? Phone { get; init; }
     public string? PhoneNumber { get; init; }
     public string? Email { get; init; }
     public string? Address { get; init; }

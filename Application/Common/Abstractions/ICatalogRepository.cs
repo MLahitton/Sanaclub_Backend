@@ -39,4 +39,20 @@ public interface ICatalogRepository
     Task<Guid?> GetEvolutionStatusIdByCodeAsync(
         string code,
         CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsIdentificationTypeAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsGenderAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsCivilStatusAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsPatientStatusAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 }

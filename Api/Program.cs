@@ -26,6 +26,27 @@ if (!isMaintenanceCommand)
     builder.Services.AddApiAuthentication(builder.Configuration);
 }
 
+const string FrontendDevelopmentCorsPolicy = "FrontendDevelopment";
+var frontendDevelopmentOrigins = new[]
+{
+    "http://localhost:5173",
+    "https://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://127.0.0.1:5173"
+};
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(FrontendDevelopmentCorsPolicy, policy =>
+    {
+        policy
+            .WithOrigins(frontendDevelopmentOrigins)
+            .AllowAnyHeader()
+            .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddApiSwagger();
 
 var app = builder.Build();
@@ -81,6 +102,7 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.UseCors(FrontendDevelopmentCorsPolicy);
     }
 
     app.UseApiRequestLogging();
