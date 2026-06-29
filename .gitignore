@@ -5,6 +5,8 @@
 
 # dotenv files
 .env
+.env.*
+!.env.example
 
 # User-specific files
 *.rsuser
@@ -15,6 +17,19 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+
+# Document storage and credentials
+private-storage/
+**/private-storage/
+secrets/
+**/secrets/
+*.local.json
+*.Development.local.json
+google-service-account*.json
+gcp-service-account*.json
+aws-credentials*.json
+azure-credentials*.json
+service-account*.json
 
 # Mono auto generated files
 mono_crash.*

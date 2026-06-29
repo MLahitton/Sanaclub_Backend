@@ -152,6 +152,18 @@ public static class RolePermissionSeedData
             "ADMIN",
             "documents.cancel"),
         new SeedRolePermission(
+            SeedId(130),
+            GetRoleId("ADMIN"),
+            GetPermissionId("documents.generate"),
+            "ADMIN",
+            "documents.generate"),
+        new SeedRolePermission(
+            SeedId(131),
+            GetRoleId("ADMIN"),
+            GetPermissionId("documents.download"),
+            "ADMIN",
+            "documents.download"),
+        new SeedRolePermission(
             SeedId(19),
             GetRoleId("ADMIN"),
             GetPermissionId("documents.print_queue"),

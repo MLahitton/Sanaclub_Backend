@@ -3,10 +3,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Application.Common.Security;
+using Sanaclub.Infrastructure.Documents;
 using Sanaclub.Infrastructure.Security;
 using Sanaclub.Infrastructure.Persistence.Repositories;
 using Sanaclub.Infrastructure.Persistence.Seeders;
 using Sanaclub.Infrastructure.Persistence;
+using System;
 
 namespace Sanaclub.Infrastructure;
 
@@ -61,6 +63,51 @@ public static class DependencyInjection
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ITokenService, JwtTokenService>();
+
+        services.Configure<DocumentStorageOptions>(options =>
+        {
+            var section = configuration.GetSection(DocumentStorageOptions.SectionName);
+            var configuredProvider = section["Provider"];
+            if (!string.IsNullOrWhiteSpace(configuredProvider))
+            {
+                options.Provider = configuredProvider;
+            }
+
+            options.Local = new LocalDocumentStorageOptions
+            {
+                BasePath = section["Local:BasePath"]
+            };
+
+            if (string.IsNullOrWhiteSpace(options.Provider))
+            {
+                options.Provider = "Local";
+            }
+
+            if (options.Local is null)
+            {
+                options.Local = new LocalDocumentStorageOptions();
+            }
+
+            if (string.IsNullOrWhiteSpace(options.Local.BasePath))
+            {
+                options.Local.BasePath = LocalDocumentStorageOptions.GetDefaultBasePath();
+            }
+        });
+
+        var storageProvider = configuration[$"{DocumentStorageOptions.SectionName}:Provider"];
+        if (string.IsNullOrWhiteSpace(storageProvider))
+        {
+            storageProvider = "Local";
+        }
+
+        if (!storageProvider.Equals("Local", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"DocumentStorage provider '{storageProvider}' no está soportado en esta fase.");
+        }
+
+        services.AddScoped<IDocumentStorage, LocalDocumentStorage>();
+
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IPatientRepository, PatientRepository>();
         services.AddScoped<ICatalogRepository, CatalogRepository>();
@@ -68,6 +115,8 @@ public static class DependencyInjection
         services.AddScoped<ITreatmentSheetRepository, TreatmentSheetRepository>();
         services.AddScoped<IEvolutionSheetRepository, EvolutionSheetRepository>();
         services.AddScoped<IGeneratedDocumentRepository, GeneratedDocumentRepository>();
+        services.AddScoped<ITreatmentSheetPdfGenerator, TreatmentSheetPdfGenerator>();
+
 
         services.AddScoped<AuthSeeder>();
         services.AddScoped<CatalogSeeder>();

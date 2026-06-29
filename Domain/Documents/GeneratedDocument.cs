@@ -10,6 +10,10 @@ public sealed class GeneratedDocument : AuditableEntity
     public string Title { get; private set; } = string.Empty;
     public string FileName { get; private set; } = string.Empty;
     public string ContentType { get; private set; } = string.Empty;
+    public string StorageProvider { get; private set; } = "LOCAL";
+    public string? StorageBucket { get; private set; }
+    public string StorageObjectKey { get; private set; } = string.Empty;
+    public string? StorageExternalId { get; private set; }
     public string StoragePath { get; private set; } = string.Empty;
     public long FileSizeBytes { get; private set; }
     public string Status { get; private set; } = string.Empty;
@@ -24,6 +28,10 @@ public sealed class GeneratedDocument : AuditableEntity
     private const int MaxFileNameLength = 255;
     private const int MaxContentTypeLength = 100;
     private const int MaxStoragePathLength = 1000;
+    private const int MaxStorageProviderLength = 50;
+    private const int MaxStorageBucketLength = 255;
+    private const int MaxStorageObjectKeyLength = 2048;
+    private const int MaxStorageExternalIdLength = 255;
     private const int MaxStatusLength = 50;
 
     private GeneratedDocument()
@@ -37,9 +45,13 @@ public sealed class GeneratedDocument : AuditableEntity
         string title,
         string fileName,
         string contentType,
+        string storageProvider,
+        string storageObjectKey,
+        string? storageBucket,
         string storagePath,
         long fileSizeBytes,
-        Guid generatedByUserId)
+        Guid generatedByUserId,
+        string? storageExternalId = null)
     {
         if (patientId == Guid.Empty)
         {
@@ -103,6 +115,40 @@ public sealed class GeneratedDocument : AuditableEntity
             throw new DomainException("El tipo de contenido no puede superar los 100 caracteres.");
         }
 
+        var trimmedStorageProvider = string.IsNullOrWhiteSpace(storageProvider)
+            ? string.Empty
+            : storageProvider.Trim();
+        if (string.IsNullOrWhiteSpace(trimmedStorageProvider))
+        {
+            throw new DomainException("El proveedor de almacenamiento es obligatorio.");
+        }
+
+        if (trimmedStorageProvider.Length > MaxStorageProviderLength)
+        {
+            throw new DomainException("El proveedor de almacenamiento no puede superar los 50 caracteres.");
+        }
+
+        var trimmedStorageBucket = string.IsNullOrWhiteSpace(storageBucket)
+            ? null
+            : storageBucket.Trim();
+        if (trimmedStorageBucket is not null && trimmedStorageBucket.Length > MaxStorageBucketLength)
+        {
+            throw new DomainException("El bucket de almacenamiento no puede superar los 255 caracteres.");
+        }
+
+        var trimmedStorageObjectKey = string.IsNullOrWhiteSpace(storageObjectKey)
+            ? string.Empty
+            : storageObjectKey.Trim();
+        if (string.IsNullOrWhiteSpace(trimmedStorageObjectKey))
+        {
+            throw new DomainException("La clave de almacenamiento es obligatoria.");
+        }
+
+        if (trimmedStorageObjectKey.Length > MaxStorageObjectKeyLength)
+        {
+            throw new DomainException("La clave de almacenamiento no puede superar los 2048 caracteres.");
+        }
+
         var trimmedStoragePath = string.IsNullOrWhiteSpace(storagePath)
             ? string.Empty
             : storagePath.Trim();
@@ -132,7 +178,11 @@ public sealed class GeneratedDocument : AuditableEntity
         Title = trimmedTitle;
         FileName = trimmedFileName;
         ContentType = trimmedContentType;
+        StorageProvider = trimmedStorageProvider;
+        StorageBucket = trimmedStorageBucket;
+        StorageObjectKey = trimmedStorageObjectKey;
         StoragePath = trimmedStoragePath;
+        StorageExternalId = storageExternalId;
         FileSizeBytes = fileSizeBytes;
         Status = StatusGenerated;
         GeneratedAtUtc = DateTime.UtcNow;

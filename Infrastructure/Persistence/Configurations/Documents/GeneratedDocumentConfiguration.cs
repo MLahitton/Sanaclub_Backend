@@ -44,6 +44,26 @@ public sealed class GeneratedDocumentConfiguration : IEntityTypeConfiguration<Ge
             .HasMaxLength(100)
             .IsRequired();
 
+        builder.Property(x => x.StorageProvider)
+            .HasColumnName("storage_provider")
+            .HasMaxLength(50)
+            .IsRequired();
+
+        builder.Property(x => x.StorageBucket)
+            .HasColumnName("storage_bucket")
+            .HasMaxLength(255)
+            .IsRequired(false);
+
+        builder.Property(x => x.StorageObjectKey)
+            .HasColumnName("storage_object_key")
+            .HasMaxLength(2048)
+            .IsRequired(false);
+
+        builder.Property(x => x.StorageExternalId)
+            .HasColumnName("storage_external_id")
+            .HasMaxLength(255)
+            .IsRequired(false);
+
         builder.Property(x => x.StoragePath)
             .HasColumnName("storage_path")
             .HasMaxLength(1000)

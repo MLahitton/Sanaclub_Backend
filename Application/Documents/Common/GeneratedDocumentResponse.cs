@@ -11,6 +11,10 @@ public sealed class GeneratedDocumentResponse
     public string Title { get; init; } = string.Empty;
     public string FileName { get; init; } = string.Empty;
     public string ContentType { get; init; } = string.Empty;
+    public string? StorageProvider { get; init; }
+    public string? StorageBucket { get; init; }
+    public string? StorageObjectKey { get; init; }
+    public string? StorageExternalId { get; init; }
     public string StoragePath { get; init; } = string.Empty;
     public long FileSizeBytes { get; init; }
     public string Status { get; init; } = string.Empty;
