@@ -1,4 +1,5 @@
 using Sanaclub.Domain.TreatmentSheets;
+using Sanaclub.Application.TreatmentSheets.PendingMedicalIndication;
 
 namespace Sanaclub.Application.Common.Abstractions;
 
@@ -20,6 +21,21 @@ public interface ITreatmentSheetRepository
         Guid patientId,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyCollection<PendingTreatmentSheetResponse>> ListPendingMedicalIndicationAsync(
+        Guid draftStatusId,
+        string? search,
+        DateOnly? fromDate,
+        DateOnly? toDate,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<int> CountPendingMedicalIndicationAsync(
+        Guid draftStatusId,
+        string? search,
+        DateOnly? fromDate,
+        DateOnly? toDate,
+        CancellationToken cancellationToken = default);
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
-

@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sanaclub.Api.Authorization.Permissions;
 using Sanaclub.Api.Contracts.EvolutionSheets;
+using Sanaclub.Application.Common.Models;
 using Sanaclub.Application.EvolutionSheets.Common;
 using Sanaclub.Application.EvolutionSheets.CompleteNewIndications;
 using Sanaclub.Application.EvolutionSheets.GetById;
+using Sanaclub.Application.EvolutionSheets.PendingNewIndications;
 
 namespace Sanaclub.Api.Controllers;
 
@@ -37,6 +39,34 @@ public sealed class EvolutionSheetsController : ControllerBase
         var query = new GetEvolutionSheetByIdQuery
         {
             EvolutionSheetId = id
+        };
+
+        var response = await _sender.Send(query, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpGet("pending-new-indications")]
+    [RequirePermission("evolutions.update_draft")]
+    [ProducesResponseType(typeof(PaginatedResult<PendingEvolutionSheetResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<PaginatedResult<PendingEvolutionSheetResponse>>> ListPendingNewIndications(
+        [FromQuery] string? search,
+        [FromQuery] DateOnly? fromDate,
+        [FromQuery] DateOnly? toDate,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new ListPendingNewIndicationsEvolutionSheetsQuery
+        {
+            Search = search,
+            FromDate = fromDate,
+            ToDate = toDate,
+            PageNumber = pageNumber,
+            PageSize = pageSize
         };
 
         var response = await _sender.Send(query, cancellationToken);
