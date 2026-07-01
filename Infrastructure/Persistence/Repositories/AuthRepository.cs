@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sanaclub.Application.Appointments.ListTherapists;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Domain.Auth;
 using Sanaclub.Infrastructure.Persistence;
@@ -223,6 +224,29 @@ public sealed class AuthRepository : IAuthRepository
                           select permission.Code;
 
         return await permissions.Distinct().ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyCollection<AppointmentTherapistResponse>> ListActiveTherapistsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var query = from user in _context.Users.AsNoTracking()
+                    join userRole in _context.UserRoles.AsNoTracking() on user.Id equals userRole.UserId
+                    join role in _context.Roles.AsNoTracking() on userRole.RoleId equals role.Id
+                    where user.IsActive
+                          && userRole.IsActive
+                          && role.IsActive
+                          && role.Code == "THERAPIST"
+                    orderby user.FullName, user.Email
+                    select new AppointmentTherapistResponse
+                    {
+                        Id = user.Id,
+                        FullName = user.FullName,
+                        Email = user.Email
+                    };
+
+        return await query
+            .Distinct()
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<RefreshToken?> GetRefreshTokenByHashAsync(

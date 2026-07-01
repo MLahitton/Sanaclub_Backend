@@ -1,4 +1,5 @@
 using Sanaclub.Domain.Auth;
+using Sanaclub.Application.Appointments.ListTherapists;
 
 namespace Sanaclub.Application.Common.Abstractions;
 
@@ -40,6 +41,9 @@ public interface IAuthRepository
 
     Task<IReadOnlyCollection<string>> GetActivePermissionCodesByUserIdAsync(
         Guid userId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<AppointmentTherapistResponse>> ListActiveTherapistsAsync(
         CancellationToken cancellationToken = default);
 
     Task<Role?> GetRoleByCodeAsync(

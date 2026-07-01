@@ -10,6 +10,7 @@ using Sanaclub.Application.Appointments.Confirm;
 using Sanaclub.Application.Appointments.Create;
 using Sanaclub.Application.Appointments.GetById;
 using Sanaclub.Application.Appointments.List;
+using Sanaclub.Application.Appointments.ListTherapists;
 using Sanaclub.Application.Appointments.Update;
 using Sanaclub.Application.Common.Models;
 
@@ -86,6 +87,21 @@ public sealed class AppointmentsController : ControllerBase
             PageSize = queryParameters.PageSize
         };
 
+        var response = await _sender.Send(query, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpGet("therapists")]
+    [RequirePermission("appointments.create")]
+    [ProducesResponseType(typeof(IReadOnlyCollection<AppointmentTherapistResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IReadOnlyCollection<AppointmentTherapistResponse>>> ListTherapists(
+        CancellationToken cancellationToken)
+    {
+        var query = new ListAppointmentTherapistsQuery();
         var response = await _sender.Send(query, cancellationToken);
 
         return Ok(response);
