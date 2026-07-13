@@ -31,11 +31,10 @@ public sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, 
         var user = await _authRepository.GetUserByIdAsync(request.UserId, cancellationToken);
         if (user is null)
         {
-            throw new NotFoundException("El usuario no fue encontrado.");
+            throw new NotFoundException("La persona usuaria seleccionada no existe.");
         }
 
         var role = await _authRepository.GetActiveRoleByUserIdAsync(request.UserId, cancellationToken);
         return UserResponse.From(user, role);
     }
 }
-

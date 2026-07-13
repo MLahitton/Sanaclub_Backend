@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using MediatR;
 using Sanaclub.Application.Common.Abstractions;
 using Sanaclub.Application.Common.Exceptions;
@@ -9,6 +10,7 @@ namespace Sanaclub.Application.Users.Update;
 public sealed class UpdateUserCommand : IRequest<UserResponse>
 {
     public Guid UserId { get; init; }
+    public string Email { get; init; } = string.Empty;
     public string FirstName { get; init; } = string.Empty;
     public string LastName { get; init; } = string.Empty;
     public string RoleCode { get; init; } = string.Empty;
@@ -18,6 +20,7 @@ public sealed class UpdateUserCommand : IRequest<UserResponse>
 public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserResponse>
 {
     private const string UserIdField = "userId";
+    private const string EmailField = "email";
     private const string FirstNameField = "firstName";
     private const string LastNameField = "lastName";
     private const string RoleCodeField = "roleCode";
@@ -45,6 +48,24 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
             throw new AppValidationException(
                 UpdatedByUserIdField,
                 "El identificador del usuario actualizador es obligatorio.");
+        }
+
+        var email = request.Email.Trim();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new AppValidationException(EmailField, "El correo electrónico es obligatorio.");
+        }
+
+        if (email.Length > UserManagementConstants.MaxEmailLength)
+        {
+            throw new AppValidationException(
+                EmailField,
+                $"El correo electrónico no puede superar {UserManagementConstants.MaxEmailLength} caracteres.");
+        }
+
+        if (!IsValidEmail(email))
+        {
+            throw new AppValidationException(EmailField, "El correo electrónico no es válido.");
         }
 
         var firstName = request.FirstName.Trim();
@@ -97,7 +118,17 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
         var user = await _authRepository.GetUserByIdForUpdateAsync(request.UserId, cancellationToken);
         if (user is null)
         {
-            throw new NotFoundException("El usuario no fue encontrado.");
+            throw new NotFoundException("La persona usuaria seleccionada no existe.");
+        }
+
+        var normalizedEmail = email.ToLowerInvariant();
+        var existingUserWithEmail = await _authRepository.GetUserByNormalizedEmailAsync(
+            normalizedEmail,
+            cancellationToken);
+
+        if (existingUserWithEmail is not null && existingUserWithEmail.Id != request.UserId)
+        {
+            throw new ConflictException("Ya existe un usuario registrado con ese correo.");
         }
 
         var targetRole = await _authRepository.GetRoleByCodeAsync(roleCode, cancellationToken);
@@ -116,6 +147,7 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
                 "El nombre completo no puede superar los 200 caracteres.");
         }
 
+        user.ChangeEmail(email);
         user.UpdateFullName(fullName);
         user.MarkAsUpdated(request.UpdatedByUserId);
 
@@ -190,5 +222,10 @@ public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand
         return UserManagementConstants.InternalRoleCodes
             .Any(code => string.Equals(code, roleCode.Trim(), StringComparison.OrdinalIgnoreCase));
     }
-}
 
+    private static bool IsValidEmail(string email)
+    {
+        const string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
+    }
+}

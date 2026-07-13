@@ -126,6 +126,7 @@ public sealed class UsersController : ControllerBase
         var command = new UpdateUserCommand
         {
             UserId = id,
+            Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
             RoleCode = request.RoleCode,
@@ -235,4 +236,3 @@ public sealed class UsersController : ControllerBase
         return null;
     }
 }
-
